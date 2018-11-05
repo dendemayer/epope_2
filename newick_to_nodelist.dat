@@ -1,0 +1,7 @@
+bbb lab 0 par 4 children -1 d2root 2 gainW 0 lossW 0
+ccc lab 1 par 5 children -1 d2root 2 gainW 0 lossW 0
+ddd lab 2 par 5 children -1 d2root 2 gainW 0 lossW 0
+aaa lab 3 par 6 children -1 d2root 1 gainW 0 lossW 0
+fff lab 4 par 6 children 0 d2root 1 gainW 0 lossW 0
+eee lab 5 par 6 children 1,2 d2root 1 gainW 0 lossW 0
+Root lab 6 par -1 children 3,4,5 d2root 0 gainW 0 lossW 0

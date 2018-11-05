@@ -1,0 +1,110 @@
+ePoPE -- README
+====================
+
+This package is designed to encode the gain and loss history of aligned
+genes across metazoan genomes. The phylogenetic tree is fixed. In future
+releases, there will be tools that can adopt any arbitrary phylogenetic
+tree and incorporate it into the programs pipeline.
+
+In the first step (forward recursion) the inner nodes are scored according
+to the score of their children. The score is initialized in correspondence
+to the number of copies of the gene for each species in the input
+alignment.
+
+The second step produces an optimal solution for the number of miRNAs at
+each inner node by backtracing the score array. In this step, the number of
+gained or lost miRNAs is also computed and assigned to the appropriate
+node.
+
+Finally, the tree, containing an optimal solution for the number of copies
+at each node and the number of gained and lost miRNAs is returned in two
+ways: a) a postscript file that visualizes the tree and b) a space
+seperated table file of the tree that can be used for statistical analyses,
+for example.
+
+Installation:
+-------------
+
+$ make
+
+Usage:
+------
+
+$ ./ePoPE
+
++--------------------------------------------------+
+| ePoPE 2.0                                        |
+|                                                  |
+| ePoPE - efficent Prediction of Paralog Evolution |
++==================================================+
+
+ePoPE predicts a maximal parsimony solution of gain and loss events of a gene family with paralogs.
+
+Usage: ePoPE [ arguments ] -i ALNFILE -t TREEFILE (or -n NEWICK-TREEFILE)
+
+arguments: [-o OUTFILE] [-p PS-OUTFILE]
+           [-c COLLECTFILE]
+           [-h,--help] [-v,--version]
+           [--type TYPE]
+           [-z] [-b] [-C] [-P]
+
+-i FILE              Input alignment FILE in CLUSTALW/STOCKHOLM format. [REQUIRED]
+-t FILE              Input tree FILE see example.tree.dat format. [REQUIRED]
+-n FILE              Input tree FILE in newick format see example.newick.tree.dat format. [REQUIRED]
+-w FILE              Input weight array FILE. [OPTIONAL]
+-o FILE              Output FILE for tree data. Default is writing to stdout.[OPTIONAL]
+-p FILE              Output FILE for PS-tree data. Default is 'INFILE.ps'. [OPTIONAL]
+-c FILE              FILE is a collection of calls to ePoPE with the same tree on a set of gene families created via 'ePoPE.summarize.pl'. This option forces ePoPE to draw this summarized tree. You must provide the tree file you used for the single ePoPE calls with -t option. Example call: ePoPE -c COLLECTFILE -t TREEFILE -p PS-OUTFILE [OPTIONAL]
+--type TYPE          TYPE is one of {genes, gainFam, lossFam, gain, loss, all}. Is the type of values that are plotted in the tree. Default: 'all'. [OPTIONAL]
+-z                   Calculating partition function.
+-b                   Calculating both, partition function and parsimony scores.
+-C                   suppress the collapse of inner nodes with a degree of two.
+-P                   setting the number of genes to the highest probability value in back-recursion.
+-h,--help            Show this help message.
+-v,--version         Show version information.
+
+Example call:
+
+        ./ePoPE -n example.newick -i example.ali_1 -o example.ali_1 -p example.ali_1 -b
+
+
+Please feel free to contact me for comments, bug-reports, etc.                      
+                                                                                    
+--                                                                                  
+ePoPE 2.0                                                                           
+                                                                                    
+Auhthor: Jana Hertel and Gabor Balogh:                                              
+                                                                                    
+         jana@bioinf.uni-leipzig.de                                                 
+         gabor@bioinf.uni-leipzig.de                                                
+                                                                                    
+Date:    December, 2016                                                             
+                         
+Example:
+--------
+
+$ make
+
+$ cd /example
+../ePoPE -n example_newick -i example_ali1 -o example_ali1 -p example_ali1 -b
+#writing example_ali1_PSb.out, example_ali1_PFb.out,  example_ali1_PS_PF.ps and the tree in nodelistform: collapsed_tree.dat
+
+$ ../ePoPE -n example_newick -i example_ali2 -o example_ali2 -p example_ali2 -b
+#writing example_ali2_PSb.out, example_ali2_PFb.out,  example_ali2_PS_PF.ps and the tree in nodelistform: collapsed_tree.dat
+
+$ ../ePoPE.summarize.pl -d ./ -o sum
+#writing sum_PSb.sum, sum_PFb.sum
+
+$ ../ePoPE -c sum_PSb.sum -t collapsed_tree.dat -p PSb
+#writing PSb_collect.ps
+
+$ ../ePoPE -c sum_PFb.sum -t collapsed_tree.dat -p PFb
+#writing PFb_collect.ps
+
+You can run the program over more than one alignment using a simple 'FOR'
+loop on the command line.
+
+The tool 'ePoPE.summarize.pl' summarizes the tree files for all your
+alignment, given that they are stored in an extra directory.
+
+The file ePoPE.1.gz holds the manpage.
