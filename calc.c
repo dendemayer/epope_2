@@ -1161,7 +1161,7 @@ float gl_delta(int i, int k, int node)
 			} 
 			else 
 			{
-				delta = x*(treeLossWeight[node]);		//wozu diese 1??? ACHTUNG!!: delta = x*(1+treeLossWeight[node]);	im original!?!?!
+				delta = x*(treeLossWeight[node]);		//wozu diese 1??? ACHTUNG!!:   delta = x*(1+treeLossWeight[node]);	im original!?!?!
 			}
 		}
   
