@@ -44,7 +44,7 @@ void gl_calc(struct gl_arguments ga)
 
 
 
-  //  int done[N_NODES];
+  //  int  done[N_NODES];
   float **S=NULL, inf=9999., SS; /*, p, q, x;*/
   int k;/*kk, left, right, l, leaves[N_NODES];*/
 														//char * psfname=NULL;
@@ -169,9 +169,9 @@ void gl_calc(struct gl_arguments ga)
 						printf("\nS_kv:\n");
 						gl_printS(S, kMax+1, nodesN);
 			#endif			
-			//~ printf("Score array after forward recursion:\n");
-						//~ printf("\nS_kv:\n");
-						//~ gl_printS(S, kMax+1, nodesN);			
+			printf("Score array after forward recursion:\n");
+						printf("\nS_kv:\n");
+						gl_printS(S, kMax+1, nodesN);			
 		
   /* adjust gain and loss of complete gene family */
 	int jP;
@@ -302,7 +302,7 @@ void gl_calc(struct gl_arguments ga)
 				mink = kMax;
 				for(k=0; k<=kMax; k++) 
 				{
-					if(S[k][j]  < minscore) 
+					if(S[k][j]  <= minscore) 
 					{
 						minscore = S[k][j];
 						
@@ -1124,9 +1124,7 @@ void pfgl(float **Pku,int kMax,int nodesN, int lca, struct gl_arguments ga )	// 
 
 float gl_delta(int i, int k, int node) 
 {
-	float inf=9999.; 
-	float x, delta=0.;
-
+	
   //if(i==0 && k == 0) { delta = inf; }
   //else {
     //~ x = fabs((float)(k - i));			
@@ -1144,20 +1142,27 @@ float gl_delta(int i, int k, int node)
 				//~ //printf("delta = %f (%s) gainW: %f lossW: %f\n",delta,treeN[node].o,treeGainWeight[node],treeLossWeight[node]);
   //~ return delta;
   
+  
+		float inf=9999.; 
+		float delta=0.;
+		int x;
+		
 		if(i==0 && k == 0) { delta = inf; }
-		else 
-		{
-			x = (k - i);	
-		}			
-			
-		if(x == 0) { delta = 0.; }
-		else if(x < 0) 
-		{
-			delta = abs(x)*treeGainWeight[node];
-		} 
-		else 
-		{
-			delta = x*(treeLossWeight[node]);		//wozu diese 1??? ACHTUNG!!: delta = x*(1+treeLossWeight[node]);	im original!?!?!
+		else
+		{ 
+			{
+				x = (k - i);	
+			}			
+				
+			if(x == 0) { delta = 0.; }
+			else if(x < 0) 
+			{
+				delta = abs(x)*treeGainWeight[node];
+			} 
+			else 
+			{
+				delta = x*(treeLossWeight[node]);		//wozu diese 1??? ACHTUNG!!: delta = x*(1+treeLossWeight[node]);	im original!?!?!
+			}
 		}
   
 				//printf("delta = %f (%s) gainW: %f lossW: %f\n",delta,treeN[node].o,treeGainWeight[node],treeLossWeight[node]);
