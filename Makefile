@@ -2,7 +2,7 @@ EXE	= ePoPE
 CC	= gcc
 LL	= gcc
 VERSION	= 2.0
-WARN	=  -Wall
+WARN	=  -Wall -Werror
 #CCFLAGS	= $(WARN) -O3 -O1
 CCFLAGS	= $(WARN) -g -std="c99"
 LIBS	= -lm

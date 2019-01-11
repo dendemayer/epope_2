@@ -169,10 +169,10 @@ void gl_calc(struct gl_arguments ga)
 						printf("\nS_kv:\n");
 						gl_printS(S, kMax+1, nodesN);
 			#endif			
-			printf("Score array after forward recursion:\n");
-						printf("\nS_kv:\n");
-						gl_printS(S, kMax+1, nodesN);			
-		
+		//printf("Score array after forward recursion:\n");
+			//		printf("\nS_kv:\n");
+				//	gl_printS(S, kMax+1, nodesN);			
+	
   /* adjust gain and loss of complete gene family */
 	int jP;
 	for(j=0; j<nodesN; j++) 
@@ -302,7 +302,7 @@ void gl_calc(struct gl_arguments ga)
 				mink = kMax;
 				for(k=0; k<=kMax; k++) 
 				{
-					if(S[k][j]  <= minscore) 
+					if(S[k][j]  < minscore) 
 					{
 						minscore = S[k][j];
 						
@@ -594,24 +594,7 @@ void pf(int kMax, struct gl_arguments ga, int lca) //pf(int kMax) wird aufgerufe
 			Z[k][i] = 0.;
 			printf(" now it's:%f\n", Z[k][i]);
 		}
-				
-				//ACHTUNG FALSCH FALSCH FALSCH !!!! SO NICHT:
-				//um dollo constraint zu beachten: müssen alle werte für k=0 an v auf null gesetzt werden, wenn tempZ nicht 1 ist, das bedeutet, wenn nicht alle kinder k=0 belegt haben, darf bei v k nicht 0 gewählt werden können ( if (P_v != 1)  Z_0v=0 
-				//nee moment das ist doof, da scores bei k=0 mit einbezogen werden müssen für berechnung aller scores bei v...
-				
-	/*			if(k==0)
-				{
-					//test: finde alle werte, die nicht 1 sind in k=0 zeile
-					if (Z[k][i]!= 1 )
-					{
-					 //printf("0 setzen bei v=%s\n ",treeN[i].o); //passt
-					 Z[k][i]=0.;
-					}
-				}
-				//so würde man zu wenig loss berechnen, dollo constraint wird erst beim setzen des k's berücksichtig, ohne die scores zu beeinflussen
-	*/			
-				
-				
+							
 										//wenn Pm kleiner als kmax bleiben ab Pm -1 stehen:
 				if(treeN[i].P<kMax)	//werden mit 0 gefüllt
 					for(int m =treeN[i].P+1;m<=kMax;m++)
@@ -664,7 +647,6 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 		}
 	}
 	
-	
 	//Außenmatrix einmalig bei LCA!!!! belegen: , wenn man schon durch schleife geht, kann gleich summe der spalte ausgerechnet werden:
 	float tempsumroot=0;
 	for (int k=0; k<=kMax;k++)
@@ -672,9 +654,7 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 		Zaussen[k][treePosN[lca]]=Z[k][treePosN[lca]];			//belegen der LCA-Spalte
 		tempsumroot=tempsumroot + Zaussen[k][treePosN[lca]];	//summe der LCA festhalten
 	}
-	//printf("tempsumroot für LCA:%f\n",tempsumroot);
-	//P an LCA kann direkt ausgerechnet werden:
-	//P- Matrix wird nicht mehr benötigt, skalierte Z^{*S} entspricht den p's
+	
 	for (int i=0; i<=kMax; i++)
 	{
 		//printf("Zaussen lca bei k vor skalierung: %f\n",Zaussen[i][treePosN[lca]]);
@@ -706,6 +686,9 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 	}
 */	
 	int bet=BETA;
+	
+	
+	
 			
 	for (int u= treeN[treePosN[lca]].pInP+1; u<=LAST;u++)			//lca+1 starten um lca auszulassen, ablaufen in perorder bis node LAST in perorder erreicht ist 
 	{	//printf("pInP:%d , ist: %s\n",u, treeN[treePosN[treeOrderN[u]]].o);
@@ -713,104 +696,123 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 		struct gl_nodeN *parent_p;
 		parent_p=&treeN[treePosN[treeN[treePosN[treeOrderN[u]]].parentLab]]; //treeN struct des vaters des aktuellen u´ s
 		int parent_zeile=treePosN[treeN[treePosN[treeOrderN[u]]].parentLab]; //Zeile vater, wird in matrix angegeben um seine außen zu erhalten
+		
+		
+		
 		for (int sib_u1=0;sib_u1<=parent_p->nc; sib_u1++)	//knoten wählen aus childs des vaters
 		{	
-						
-			if (treeN[treePosN[parent_p->c[sib_u1]]].c[0]==-1 || treeN[treePosN[parent_p->c[sib_u1]]].seenBWp == 1)
+			if (treeN[treePosN[parent_p->c[sib_u1]]].c[0]==-1 || treeN[treePosN[parent_p->c[sib_u1]]].seenBWp == 1 )
 			{		//wenn knoten leave oder bereits gescored wurde, weiter
-				//printf("weiter bei: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o);
+				//printf("weiter bei: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o );
 				continue;
 			}
 			
 			else	
 			{	//printf("berechnet wird score für: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o);
 				
-				float tempsum =0.;		//lt. recursion: summe über i
-				float tempsumk =0.;		//lt. recursion innen mal summe für ein k
-				float tempsumk_hold=0.;	//lt. recursion: summe über alle k´s
-				float temp_prod_sib=1.; //lt. recursion: hält prod über s
-					
-				for (int sib_u=0;sib_u<parent_p->nc; sib_u++) //ablaufen der kindknoten des vaters parent_p
+				float *temp_sum_Z_aussen = (float*)calloc(kMax+1,sizeof(float));
+				
+				for (int i=0;i<=kMax;i++)
 				{
-					if (treeN[treePosN[parent_p->c[sib_u]]].n != treeN[treePosN[parent_p->c[sib_u1]]].n) //auslassen, wenn zu scorender knoten = ein geschwister
-					{	//printf("geschwister von %s die beachtet werden: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o,treeN[treePosN[parent_p->c[sib_u]]].o);		//passt
-						for (int k=0; k<=kMax; k++)
+					temp_sum_Z_aussen[i]=0.;
+				}	
+				for (int k=0;k<=kMax;k++)
+				{
+					
+					
+					//float tempsum_Z =0.;		//lt. recursion: summe über j
+					//float tempsumk =0.;		//lt. recursion innen mal summe für ein k
+					float tempsum=0.;	//lt. recursion: summe über alle j´s
+					float temp_prod_sib=1.; //lt. recursion: hält prod über s
+					float sum_Z_aussen=0.;
+					
+									
+					for (int i=0; i<=kMax; i++)
+					{
+							
+						for (int sib_u=0;sib_u<parent_p->nc; sib_u++) //ablaufen der kindknoten des vaters parent_p
 						{	
-							for(int s=0; s<=kMax;s++)								
-							{	//an stelle k bei u werden mit s alle wege ausprobiert(vom vater zu u) für alle geschister sib_u von sib_u1
+							if (treeN[treePosN[parent_p->c[sib_u]]].n != treeN[treePosN[parent_p->c[sib_u1]]].n) //auslassen, wenn zu scorender knoten = ein geschwister
+							{	//printf("geschwister von %s die beachtet werden: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o,treeN[treePosN[parent_p->c[sib_u]]].o);		//passt
 								
-							//printf("sib_u1=%d: %s aufsummieren der geschw.:sib_u=%d %s\n",sib_u1,treeN[treePosN[parent_p->c[sib_u1]]].o,sib_u,treeN[treePosN[parent_p->c[sib_u]]].o);
+								for(int j=0; j<=kMax;j++)								
+								{	
+									//printf("i:%d  j:%d\n",i,j);
+									
+									//printf("tempsum: %f",tempsum); 
+									tempsum=tempsum + Z[j][treePosN[parent_p->c[sib_u]]] * exp((bet*abs(i-j)));
+									//printf(" + Z[j][treePosN[treeOrderN[sib_u]]] %f * e^(-%d) %f  = %f \n", Z[j][treePosN[parent_p->c[sib_u]]],abs(i-j),exp((bet*abs(i-j))), tempsum);
 								
-							//printf("tempsum: %f + Zaussen[%d][%d] (%f)=\n",tempsum,s,*parent_p, Zaussen[s][*parent_p]);	
-														
-							tempsum= tempsum + Zaussen[s][parent_zeile]*exp((bet*abs(k-s))); //wege von v nach u(k)      //version ohne delta fkt
-							//printf("Zaussen: %f * exp((%d * abs(%d - %d)  ((%d)) =  %f\n",Zaussen[s][*parent_p], bet, k,s,abs(k-s), exp((bet*abs(k-s))));
-							//printf(" tempsum = %f\n",tempsum);
-							//printf("dad species: %s\n",parent_p->o);
-							
+								}
+								//printf("temp_prod_sib %f ", temp_prod_sib);
+								temp_prod_sib= temp_prod_sib*tempsum;
+								//printf("* tempsum %f = temp_prod_sib %f\n\n",tempsum, temp_prod_sib);	
+								tempsum=0.;
 							}
-							tempsumk=Z[k][treePosN[parent_p->c[sib_u]]]*tempsum;	//innen mal summe der wege eines k´s vom vater zu allen k´s von u
-							tempsumk_hold=tempsumk_hold+tempsumk;			
-							
-							//printf("innen %f * tempsum %f = tempsumk %f\n",Z[k][treePosN[parent_p->c[sib_u]]],tempsum, tempsumk);
-							//printf("tempsumk: %f\n",tempsumk);
-							//printf("tempsumk_hold: %f\n",tempsumk_hold);
+								
 						}
 						
-						//hier ist ein geschwisterknoten komplett aufgerechnet -> multiplikation aller geschwister 
-						//printf(" temp_prod_sib %f * tempsumk_hold  %f", temp_prod_sib,tempsumk_hold);
-						temp_prod_sib = temp_prod_sib*tempsumk_hold;
-						//printf("=temp_prod_sib %f\n",temp_prod_sib);
+						temp_sum_Z_aussen[i]=Zaussen[i][parent_zeile]*exp((bet*abs(i-k)))*temp_prod_sib;
+										//~ printf("\n\nZaussen[%d][parent_zeile] %f  *e^( -%d)  %f",i, Zaussen[i][parent_zeile], abs(i-k), Zaussen[i][parent_zeile]*exp((bet*abs(i-k)))); 
+										//~ printf("* temp_prod_sib %f =  temp_sum_Z_aussen[%d] %f \n\n",temp_prod_sib,i,temp_sum_Z_aussen[i]);
+						//printf temp_prod_sib,i,temp_sum_Z_aussen[i]);
+						temp_prod_sib = 1.;
+						//printf("sind gerade bei: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o);	
+						//treeN[treePosN[parent_p->c[sib_u1]]].seenBWp = 1;
 					
 					}
-							
-				}	//prod aller siblings fertig	--> gesp. in temp_prod_sib		das entsprich Z^*_w in recursion
-				tempsum=0;
-				//weiter mit "normaler recursion um u auszurechnen", hier kann prod aller siblings einbezogen werden (temp_prod_sib)
-				for (int k=0; k<=kMax; k++)
-					{	
-						for(int s=0; s<=kMax;s++)								
-						{	//an stelle k bei u werden mit s alle wege ausprobiert
-						
-						tempsum= tempsum + Zaussen[s][parent_zeile]*exp((bet*abs(k-s))); //wege von v nach u(k)      //version ohne delta fkt
-						//printf("tempsum %f, bei s=%d  und k=%d für %s\n", tempsum,s,k,treeN[treePosN[parent_p->c[sib_u1]]].o);
-						}	
-							//hier sib_u1 beachten, das ist der knoten um den es gerade geht
-					
-						Zaussen[k][treePosN[parent_p->c[sib_u1]]] = Z[k][treePosN[parent_p->c[sib_u1]]]*tempsum*temp_prod_sib; 
-						//printf(" innen    %f  mal tempsum   %f   mal tempprod  %f  =  außen %f  bei k=%d   für  %s \n",Z[k][treePosN[parent_p->c[sib_u1]]], tempsum, temp_prod_sib,Zaussen[k][treePosN[parent_p->c[sib_u1]]],k,treeN[treePosN[parent_p->c[sib_u1]]].o ); 
-						tempsum=0;
+					for (int l=0;l<=kMax;l++)
+					{				
+						sum_Z_aussen= sum_Z_aussen + temp_sum_Z_aussen[l];
+						//printf("sum_Z_aussen: %f \n",sum_Z_aussen);
 					}
+						Zaussen[k][treePosN[parent_p->c[sib_u1]]] = sum_Z_aussen*Z[k][treePosN[parent_p->c[sib_u1]]];
+						sum_Z_aussen=0;
+					
+				}	
+				free(temp_sum_Z_aussen);
+				
+				for (int sib_skalieren=0;sib_skalieren<=parent_p->nc; sib_skalieren++)	//knoten wählen aus childs des vaters
+			    {
+			    	//skalieren für alle kinder von parent_p sib_u1
+			    	float tempsump=0.;
+			    	for (int pk=0; pk<=kMax;pk++)
+			    	{
+			    		tempsump=tempsump + Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]];	
+			    		
+			    	}
+			    	//jetzt steht erst mal summe je spalte, für jedes k wahrscheinlichkeit ausrechnen:
+			    	for (int pk=0; pk<=kMax;pk++)
+			    	{
+			    		Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]= Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]/tempsump;
+					}
+					
 					//printf("sind gerade bei: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o);	
 					treeN[treePosN[parent_p->c[sib_u1]]].seenBWp = 1;
-				
-			}
+			    }
+			}	
 			
-		}
-		for (int sib_skalieren=0;sib_skalieren<=parent_p->nc; sib_skalieren++)	//knoten wählen aus childs des vaters
-		{
-			//skalieren für alle kinder von parent_p sib_u1
-			float tempsump=0.;
-			for (int pk=0; pk<=kMax;pk++)
-			{
-				tempsump=tempsump + Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]];	
-				
-			}
-			//jetzt steht erst mal summe je spalte, für jedes k wahrscheinlichkeit ausrechnen:
-			for (int pk=0; pk<=kMax;pk++)
-			{
-				Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]= Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]/tempsump;	
-			}
+			
 		}
 	}
 		
+		
+	 //~ printf("\nZ array after FR :\n"); 
+		 //~ printf("\nZ_kv:\n");
+		 //~ gl_printS(Z, kMax+1, nodesN);
+		 
+		 	
+	 //~ printf("\nZaussen array after FR :\n"); 
+		 //~ printf("\nZ*_kv:\n");
+		 //~ gl_printS(Zaussen, kMax+1, nodesN);
+		 
 	#ifdef PRINTTABLE
 	printf("\nZ_aussen array after calculation: \n"); 
 	gl_printS(Zaussen, kMax+1, nodesN);
 	#endif
 	
-	printf("\nZ_aussen array after calculation: \n"); 
-	gl_printS(Zaussen, kMax+1, nodesN);
+	//printf("\nZ_aussen array after calculation: \n"); 
+	//	gl_printS(Zaussen, kMax+1, nodesN);
 	
 	//funktionsaufruf für gain/loss nach fertiger PF:
 	pfgl(Zaussen, kMax, nodesN, lca, ga);

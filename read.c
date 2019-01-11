@@ -1308,12 +1308,12 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 				point=strlen(ga.outfile);
 			}	
 			//char newflag [100] ;  
-			char *newflag  = (char*) calloc(100,sizeof(char));
+			char *newflag  = (char*) calloc(1000,sizeof(char));
 			strncpy(newflag,ga.outfile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
-		//	printf("flag until last point: %s\n",newflag);
+			printf("flag until last point: %s\n",newflag);
 			strncat(newflag,"_PF.out",8);
-		//	printf("flag with flag: %s\n",newflag);
+		//	printf("flag with flag: %s\n",new flag);
 			//~ for (int j=point; j< strlen(ga.outfile) ;j++)
 			//~ {
 				//~ newflag[3+j]=ga.outfile[j];
@@ -1342,7 +1342,7 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 				point=strlen(ga.psfile);
 			}	
 			
-			char newflag [100] ;  
+			char newflag [1000] ;  
 			
 			
 			strncpy(newflag,ga.psfile,point);		//outfile bis letzten punkt
@@ -1373,7 +1373,7 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 				point=strlen(ga.infile);
 			}	
 			
-			char newflag [100] ;  
+			char newflag [1000] ;  
 			strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
 		//	printf("flag until last point: %s\n",newflag);
@@ -1445,8 +1445,8 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			//char newflag [100] ;  //	printf("strlen(newflag): %lu\n", strlen(newflag));
 			//char newflagb [100] ; //printf("strlen(newflag): %lu\n", strlen(newflagb));
 			
-			char *newflag = (char*) calloc(100,sizeof(char));
-			char *newflagb = (char*) calloc(100,sizeof(char));
+			char *newflag = (char*) calloc(1000,sizeof(char));
+			char *newflagb = (char*) calloc(1000,sizeof(char));
 			
 			
 			strncpy(newflag,ga.outfile,point);
@@ -1539,7 +1539,7 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 				point=strlen(ga.infile);
 			}	
 			
-			char newflag [100] ;  
+			char newflag [1000] ;  
 			strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
 			
@@ -1616,11 +1616,11 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			}	
 			//printf("last point at %d\n", point);
 			
-			char *newflag=(char*)calloc(100,sizeof(char*)); 
+			char *newflag=(char*)calloc(1000,sizeof(char*)); 
 			strncpy(newflag,ga.psfile,point);		//outfile bis letzten punkt
 			
 			
-			//char newflag [100] ;  
+			//char newflag [1000] ;  
 			//strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			//	printf("flag until last point: %s\n",newflag);
 			strncat(newflag,"_collect.ps",12);
@@ -1653,7 +1653,7 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			
 			//printf("strlen ga.outfile in getfileextension: %lu\n",  );
 			
-			char *newflag=(char*)calloc(100,sizeof(char*)); 
+			char *newflag=(char*)calloc(1000,sizeof(char*)); 
 			strncpy(newflag,ga.outfile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
 		//	printf("flag until last point: %s\n",newflag);
@@ -1692,11 +1692,11 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 		
 		//	printf("last point at %d\n", point);
 			
-			char *newflag=(char*)calloc(100,sizeof(char*)); 
+			char *newflag=(char*)calloc(1000,sizeof(char*)); 
 			strncpy(newflag,ga.psfile,point);		//outfile bis letzten punkt
 			
 			
-			//char newflag [100] ;  
+			//char newflag [1000] ;  
 			//strncpy(newflag,ga.psfile,point);		//outfile bis letzten punkt
 			
 		//	printf("flag until last point: %s\n",newflag);
@@ -1727,11 +1727,11 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			}	
 		//	printf("last point at %d\n", point);
 			
-			char *newflag=(char*)calloc(100,sizeof(char*)); 
+			char *newflag=(char*)calloc(1000,sizeof(char*)); 
 			strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			
 			
-			//char newflag [100] ;  
+			//char newflag [1000] ;  
 			//strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
 		//	printf("flag until last point: %s\n",newflag);
@@ -1804,11 +1804,11 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			}	
 			 //printf("last point at %d\n", point);
 			
-			char *newflag=(char*)calloc(100,sizeof(char*)); 
+			char *newflag=(char*)calloc(1000,sizeof(char*)); 
 			strncpy(newflag,ga.psfile,point);		//outfile bis letzten punkt
 			
 			
-			//char newflag [100] ;  
+			//char newflag [1000] ;  
 			//strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			//	printf("flag until last point: %s\n",newflag);
 			strncat(newflag,"_collect.ps",12);

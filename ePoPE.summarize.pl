@@ -567,7 +567,7 @@ if(! (-d $inDir))
 		
 sub traceIt($,$,%) 
 		{
-			#kommt hier auch alles an?
+			
 			my ($i, $Nfam, %T) = @_;
 			
 			$Nfam += $T{$i}{gainF} - $T{$i}{lossF};
