@@ -828,22 +828,28 @@ void gl_readDATA(struct gl_arguments ga)
 	gl_setPatInnerNodes();
 
 
-  /* for(i=0; i<nodesN; i++) { */
-  /*    printf("treeN[%d].m = %d\t",i,treeN[i].m); */
-  /*    printf("treeN[%d].P = %d\t",i,treeN[i].P); */
-  /*    printf("treeN[%d].o = %s\n",i,treeN[i].o); */
-  /* } */
-  /* exit(0); */
+  //~ /* for(i=0; i<nodesN; i++) { */
+  //~ /*    printf("treeN[%d].m = %d\t",i,treeN[i].m); */
+  //~ /*    printf("treeN[%d].P = %d\t",i,treeN[i].P); */
+  //~ /*    printf("treeN[%d].o = %s\n",i,treeN[i].o); */
+  //~ /* } */
+  //~ /* exit(0); */
+
+//~ //reading weights was here in epope 1...
 
   /* read weights for gain and loss */
+  
+  
 	if(ga.scores !=NULL)
-	{
+	{	
 		fp = fopen(ga.scores, "r");
 		while(fgets(line, 512, fp))
-		{
+		{	
+			printf("zeile: %s \n ",line);
+			
 			read = sscanf(line, "%d %f %f\n", &i, &g, &l);
 			if(read == 0) continue;
-
+			
 			treeGainWeight[i] = g;
 			treeLossWeight[i] = l;
 		}
@@ -1830,7 +1836,5 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 }			
 		
 
-	
-	
-	
+
 

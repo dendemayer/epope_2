@@ -691,7 +691,8 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 	
 			
 	for (int u= treeN[treePosN[lca]].pInP+1; u<=LAST;u++)			//lca+1 starten um lca auszulassen, ablaufen in perorder bis node LAST in perorder erreicht ist 
-	{	//printf("pInP:%d , ist: %s\n",u, treeN[treePosN[treeOrderN[u]]].o);
+	{	printf("pInP:%d , ist: %s\n",u, treeN[treePosN[treeOrderN[u]]].o);
+		printf("gainweight: %f\nlossweigt: %f\n",treeN[treePosN[treeOrderN[u]]].gainW,treeN[treePosN[treeOrderN[u]]].lossW);
 			//wichtig, bei den sib loops immer auf childarray des vaters zugreifen das u bleibt ab hier fixiert
 		struct gl_nodeN *parent_p;
 		parent_p=&treeN[treePosN[treeN[treePosN[treeOrderN[u]]].parentLab]]; //treeN struct des vaters des aktuellen u´ s
@@ -2471,3 +2472,181 @@ void gl_printS(float **S, int m, int n) {
 
 /* -------------------------------------------------------------------------- */
 
+
+void set_weights( gl_arguments ga)
+{
+	//zeilenweise einlesen der weight datei:
+	
+	
+
+
+	//~ int i=0, read;
+	//~ FILE * fp;        //Stream welcher mit fgets ausgelesen wird fp ist der FILE Pointer auf den Stream 
+	//~ char line[2000],* name, abbr[4];
+	//~ float g=-1, l=-1;		//
+ //~ /* read tree, build datastructure gl_node tree[] */
+ //~ /* read alignment */
+	//~ fp = fopen(ga.infile, "r");       //  "r"	Opens a file for reading. The file must exist.
+
+	//~ if(fp == NULL) 
+	//~ {
+		//~ fprintf(stderr, "Cannot access input file: '%s'.\n", ga.infile);
+		//~ gl_freeArguments(ga);
+		//~ exit(EXIT_FAILURE);
+	//~ }
+
+
+
+  //~ /* read file linewise */
+	//~ char *pch;
+
+	//~ while(fgets(line, 2000, fp))
+	//~ {        //char *fgets(char *str, int n, FILE *stream)
+                                        //~ // str -- This is the pointer to an array of chars where the string read is stored.
+                                        //~ //n -- This is the maximum number of characters to be read (including the final null-character). Usually, the length of the array passed as str is used.
+                                        //~ //stream -- This is the pointer to a FILE object that identifies the stream where characters are read from.
+
+    //~ /* extract first word */
+
+		//~ pch = strchr(line, ' ');        //char *strchr(char *string, int c);
+		//~ if(pch == NULL) continue;
+		//~ name = (char *) calloc(pch-line+2, sizeof(char));
+		//~ strncpy(name, line, pch-line+1);
+    //~ //    read = sscanf(line, "%s %s", name, seq);
+    //~ //if(read == -1) continue;
+
+		//~ if(strcmp(name, "STOCKHOLM")     ==0) { free(name); continue;}
+		//~ else if(strcmp(name, "CLUSTAL")  ==0) { free(name); continue;}
+		//~ else if(strcmp(name, "CLUSTALW") ==0) { free(name); continue;}
+		//~ else if(strcmp(name, "//")       ==0) { free(name); continue;}
+		//~ else if(strlen(name) == 0) { free(name); continue;}
+    //~ /* exclude lines starting with '#' (comments) */
+		//~ if(name[0] == 35)
+		//~ {   
+			//~ free(name);
+			//~ continue;
+		//~ }
+  //~ //printf("line: %s\nname1: %s\n",line,name);
+
+    //~ /* extract species abbreviation */
+		//~ int namesplit_n = 0;
+		
+		
+		//~ char **namesplit = gl_splitString(name, ':', &namesplit_n);
+		
+		
+    //~ /* printf("namesplit_n = %d -> %s\n",namesplit_n, name); */
+		//~ if(namesplit_n == 1)
+		//~ {
+      //~ //      if(strncpy(abbr, name, 3)) {
+			//~ if(strncpy(abbr, name, 3))
+			//~ {
+				//~ abbr[3] = '\0';
+	//~ //printf("abbr: %s\n",abbr);
+				//~ for(i=0; i<nodesN; i++)
+				//~ {
+	  //~ /* printf ("%d %s %s\n", i,treeN[i].o,abbr); */
+					//~ if(strncmp(treeN[i].o, abbr, 3) == 0)
+					//~ {
+						//~ treeN[i].m++;
+						//~ treeN[i].P++;
+						//~ break;
+					//~ }	
+	  //~ /* if(strcmp(tree[i].o, abbr) == 0) { */
+	  //~ /*   tree[i].m++; */
+	  //~ /*   break; */
+	  //~ /* } */
+				//~ }
+			//~ }
+		//~ } 
+		//~ else
+		//~ {
+			//~ if(strncpy(abbr,namesplit[1],3))
+			//~ {
+				//~ abbr[3] = '\0';
+				//~ for(i=0; i<N_NODES; i++)
+				//~ {
+	  //~ /* printf ("%d %s %s\n", i,tree[i].o,abbr); */
+					//~ if(strcmp(treeN[i].o, abbr) == 0)
+					//~ {
+						//~ treeN[i].m++;
+						//~ treeN[i].P++;
+						//~ break;
+					//~ }
+	  //~ /* if(strcmp(tree[i].o, abbr) == 0) { */
+	  //~ /*   tree[i].m++; */
+	  //~ /*   break; */
+	  //~ /* } */
+				//~ }
+			//~ }
+
+		//~ }
+    //~ int z;
+    //~ for(z=0; z<namesplit_n; z++) 
+    //~ { 
+		//~ free(namesplit[z]); 
+	//~ }
+    //~ free(namesplit);
+    //~ free(name);
+
+    //~ abbr[0] = '\0';
+
+	//~ }
+
+	//~ fclose(fp);
+
+
+
+
+
+
+	
+	int kMin, kMax;	
+	
+	int lca = gl_getLCA(&kMin, &kMax);
+	printf("\n\n\n lca:%d\n\n\n",lca);
+	printf("First: %d \n",kMin);
+	printf("LAST: %d \n",kMax);
+	printf("LAST: %d \n",LAST);
+	printf("FIRST: %d \n",FIRST);
+	
+	
+
+	
+	//~ //for (int u= treeN[treePosN[lca]].pInP+1; u<=LAST;u++)			//lca+1 starten um lca auszulassen, ablaufen in perorder bis node LAST in perorder erreicht ist 
+	//~ //{	printf("pInP:%d , ist: %s\n",u, treeN[treePosN[treeOrderN[u]]].o);
+	//~ //	printf("gainweight: %f\nlossweigt: %f\n",treeN[treePosN[treeOrderN[u]]].gainW,treeN[treePosN[treeOrderN[u]]].lossW);
+		
+	//~ //}
+	
+	
+	//~ if(ga.scores !=NULL)
+	//~ {	
+		
+		
+		
+		//~ fp = fopen(ga.scores, "r");
+		//~ while(fgets(line, 512, fp))
+		//~ {	
+			//~ printf("zeile: %s \n ",line);
+			
+			//~ read = sscanf(line, "%d %f %f\n", &i, &g, &l);
+			//~ if(read == 0) continue;
+			
+			//~ treeGainWeight[i] = g;
+			//~ treeLossWeight[i] = l;
+		//~ }
+
+		//~ fclose(fp);
+	//~ } 
+	//~ else
+    //~ {
+        //~ for(i=0;i<nodesN;i++)
+        //~ {
+            //~ treeGainWeight[i] = 1.;
+            //~ treeLossWeight[i] = 1.;
+        //~ }
+    //~ }
+}
+	
+	

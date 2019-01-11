@@ -82,4 +82,6 @@ void collapstest(char *filename, struct gl_arguments *ga);
 
 struct gl_arguments getFilenameExtension(struct gl_arguments ga);
 
+void set_weights(struct gl_arguments ga) ;
+
 #endif

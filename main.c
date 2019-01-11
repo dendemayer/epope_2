@@ -45,10 +45,24 @@ int main(int argc, char *argv[])
 			return(0);
 			
 		}
+	
+	//
+			
+	
 			
 	gl_printArguments(arg);
 	
 	gl_readDATA(arg);  
+	
+	// baum ist hie rsoweit fertig gebaut, jetzt noch die weights einfügen:
+	if(arg.scores !=NULL)
+	{	
+		set_weights(arg);	
+	}
+	
+	
+	
+	
 	
 		if(arg.collectfile==NULL)
 		{
