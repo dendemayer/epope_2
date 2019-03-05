@@ -38,7 +38,5 @@ void pfb(int kMax,int nodesN, float **Z,struct gl_arguments ga, int lca );
 void pf_with_z(struct gl_arguments ga);
 void pfgl(float **Pku, int kMax,int nodesN, int lca, struct gl_arguments ga);
 
-void set_weights(struct gl_arguments ga) ;
-
 int gl_OLDgetLCA();
 #endif

@@ -30,6 +30,7 @@ typedef struct gl_arguments {
   int b; // calculate both, PF and PS
   int P; //k bei höchsten P wählen (PF backward)
   int C; //collapsen der nodes unterdrücken?
+  float T;
   int lossBT;     /* 0|1 that activates loss-backtracing at the end */
   int collaps;
   int seenBWp;

@@ -54,11 +54,11 @@ int main(int argc, char *argv[])
 	
 	gl_readDATA(arg);  
 	
-	// baum ist hie rsoweit fertig gebaut, jetzt noch die weights einfügen:
-	if(arg.scores !=NULL)
-	{	
-		set_weights(arg);	
-	}
+	// baum ist hier soweit fertig gebaut, jetzt noch die weights einfügen:
+	//~ if(arg.scores !=NULL)
+	//~ {	
+		//~ set_weights(arg);	
+	//~ }
 	
 	
 	

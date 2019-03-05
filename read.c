@@ -97,6 +97,13 @@ struct gl_arguments gl_readArguments(int argc, char *argv[]) {
 			break;
 			
 			
+			case 'T':				
+			if(argc < i + 2) usage();
+			//printf("i:%d  argc:%d\n",i, argc);
+			args.T = atof(argv[i+1]);
+			break;
+			
+			
 			case 'w':
 	/* get weight array */
 			if(argc < i+2) usage();
@@ -194,6 +201,7 @@ struct gl_arguments gl_initArguments() {
   a.b = 0;
   a.P = 0;
   a.C = 0;
+  a.T = 1.;
   a.lossBT = 0;
   a.collaps = 0;
   a.seenBWp =0;
@@ -269,6 +277,7 @@ struct gl_arguments gl_printArguments(gl_arguments ga) {
   fprintf(stdout, "%-35s %d\n","-C is set to:", ga.C);
   fprintf(stdout, "%-35s %d\n","-z is set to:", ga.z);
   fprintf(stdout, "%-35s %d\n","-b is set to:", ga.b);
+  fprintf(stdout, "%-35s %f\n","-T is set to:", ga.T);
   fprintf(stdout, "%-35s %s\n","-c is set to:", ga.collectfile);
  // fprintf(stdout, "%-35s %s\n","-d is set to:", ga.directory);
   
@@ -338,10 +347,10 @@ void usage() {
 void version() {
 
   fprintf(stdout, "ePoPE 2.0\n\n");
-  fprintf(stdout, "Auhthor: Jana Hertel and Gabor Balogh:\n\n");
-  fprintf(stdout, "         jana@bioinf.uni-leipzig.de\n");
-  fprintf(stdout, "         gabor@bioinf.uni-leipzig.de\n\n");
-  fprintf(stdout, "Date:    December, 2016\n\n");
+  fprintf(stdout, "Author:		Gabor Balogh and Jana Hertel:\n\n");
+  fprintf(stdout, "		gabor@bioinf.uni-leipzig.de\n");
+  fprintf(stdout, "		jana@bioinf.uni-leipzig.de\n\n");
+  fprintf(stdout, "Date:		December, 2016\n\n");
 
   exit(EXIT_SUCCESS);
 
@@ -845,7 +854,7 @@ void gl_readDATA(struct gl_arguments ga)
 		fp = fopen(ga.scores, "r");
 		while(fgets(line, 512, fp))
 		{	
-			printf("zeile: %s \n ",line);
+			//printf("zeile: %s \n ",line);
 			
 			read = sscanf(line, "%d %f %f\n", &i, &g, &l);
 			if(read == 0) continue;
@@ -913,7 +922,7 @@ void gl_buildTree(char *filename)
 	{
 		splitLine = gl_splitString(line, ' ',&n);
 		strcpy(treeN[nodes].o,splitLine[0]);
-		//printf("treeN[%d].o=%s\n",nodes,treeN[nodes].o);
+		printf("treeN[%d].o=%s\n",nodes,treeN[nodes].o);
 		read = sscanf(splitLine[2], "%d", &treeN[nodes].n);    assert(read);	//
 		read = sscanf(splitLine[4], "%d", &par);    assert(read);
 		if(par == -1) 
@@ -1317,7 +1326,7 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			char *newflag  = (char*) calloc(1000,sizeof(char));
 			strncpy(newflag,ga.outfile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
-			printf("flag until last point: %s\n",newflag);
+			//printf("flag until last point: %s\n",newflag);
 			strncat(newflag,"_PF.out",8);
 		//	printf("flag with flag: %s\n",new flag);
 			//~ for (int j=point; j< strlen(ga.outfile) ;j++)
@@ -1459,8 +1468,8 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			newflag[point]='\0';
 			strncpy(newflagb,ga.outfile,point);		//outfile bis letzten punkt
 			newflagb[point]='\0';
-			printf("flag until last point: %s\n",newflag);
-			printf("flag until last point: %s\n",newflagb);
+			//printf("flag until last point: %s\n",newflag);
+			//printf("flag until last point: %s\n",newflagb);
 			strncat(newflag,"_PSb.out",9);
 			strncat(newflagb,"_PFb.out",9);
 			
