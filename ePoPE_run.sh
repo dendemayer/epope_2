@@ -2,10 +2,10 @@
 
 clear;
 
-PATHEPOPE="/homes/biertruck/gabor/""epope_2_paper/epope_2/"		#DIR
-ALIGN="/homes/biertruck/gabor/epope_2_paper/epope_bash_run/mipf_temp/"		#DIR
-RESULTS="/homes/biertruck/gabor/epope_2_paper/ergebnisse/script_test_2/"		#DIR
-TREE="/homes/biertruck/gabor/epope_2_paper/epope_bash_run/collapsed_tree.dat"	#FILE
+PATHEPOPE="/homes/biertruck/gabor/epope_2_paper/epope_2/"		#DIR
+ALIGN="/homes/biertruck/gabor/epope_2_paper/epope_2/example/mipf_temp/"		#DIR
+RESULTS="/homes/biertruck/gabor/epope_2_paper/epope_2/example/Results/"		#DIR
+TREE="/homes/biertruck/gabor/epope_2_paper/epope_2/example/Metazoa.tree.build.NGA.new.dat"	#FILE
 
 echo -e "path for epope binary is:\t $PATHEPOPE "
 echo -e "path for alignments is:\t\t $ALIGN "
