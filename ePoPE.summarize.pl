@@ -9,7 +9,7 @@ my $man = 0;
 my $help = 0;
 my $both = 0;
 my $version = 0;
-my ($inDir, $tree,$outfile,$treefile) = ('','GLtreeTemplate','','');
+my ($inDir, $tree,$outdir,$treefile) = ('','GLtreeTemplate','','');
 
 
 
@@ -20,7 +20,8 @@ GetOptions(
 			"help|?"=> \$help,
 			"man"   => \$man,
 			"d:s"   => \$inDir,
-			"o:s"   => \$outfile,
+			"o:s"   => \$outdir,
+			#"r:s"	=> \$resultdir,
 			"v|version" 	=> \$version
           ) or pod2usage(1);
 
@@ -38,6 +39,9 @@ if(! (-d $inDir))
   printf STDERR "\nERROR: Cannot acces input directory '%s'\n", $inDir;
   pod2usage(1);
 }
+
+printf "\nthe results directory is: %s \n",$outdir;
+
 
 
 ######################## now do the same for the files with the _PF extension:
@@ -206,19 +210,33 @@ sub Summarize
 					#print "label: ", $i,"\t name:",$FamtreePF{$i}{name}, " \t  lossF: ",$FamtreePF{$i}{lossF}," gainF: ", $FamtreePF{$i}{gainF},  "  parent: ", $FamtreePF{$i}{p} ,"\t Nfam: ", $FamtreePF{$i}{Nfam} ,  "\n"  ;
 				
 			}	
-				
+			
+			
+			my $Suffix_Dir;
+			my $tempSuffix1= $Suffix;
+			#print "$Suffix\n";
+			$Suffix=~s/.out*//;
+			#print "lalala $Suffix \n";
+			$Suffix_Dir=$Suffix;
+			$Suffix=$tempSuffix1;
+			
+			
+					
 			my $outfilePF ;
-			if( $outfile =~ /\./)
+			if( $outdir =~ /\./) #endung nach punkt wird ersetzt mit sum
 			{
-				$outfilePF = substr($outfile,0, rindex( $outfile, '.') );			#rindex STR,SUBSTR
-				$outfilePF = $outfilePF.$Suffix.".sum";				#Works just like index except that it returns the position of the last occurrence of SUBSTR in STR. If POSITION is specified,returns the last occurrence beginning at or before that position.
-	
+				
+				$outfilePF = substr($outdir,0, rindex( $outdir, '.') );			#rindex STR,SUBSTR
+				$outfilePF = $outfilePF.$Suffix_Dir."/".$Suffix.".sum";				#Works just like index except that it returns the position of the last occurrence of SUBSTR in STR. If POSITION is specified,returns the last occurrence beginning at or before that position.
+				
 				
 			}
 			else
-			{$outfilePF = $outfile.$Suffix.".sum";}
+			{
+				$outfilePF = $outdir.$Suffix_Dir."/".$Suffix.".sum";
+			}	
 			
-			print "outfilePF: ", Dumper($outfilePF), "\n\n";
+			print "\n\noutfilePF: ", Dumper($outfilePF), "\n\n";
 			
 			open(O, ">", $outfilePF) or die $!;
 			
@@ -241,11 +259,19 @@ sub Summarize
 			
 			
 			###################################################	
-			#new .dot output: with graphviz a svg file is created using this .dot file
+			#new .dot output: with graphviz a svg file is created using this .dot file , for every option ($Suffix)
+			
+			#my $tempSuffix2=$Suffix=~s/.out*//;
+			#say "Problem: endung wird nicht einfach abgeschnitten sondern 1 gespeichert: $tempSuffix2"; #also zwischenspeichern:
+	
 			
 			
 			
-			$outfilePF = $Suffix."_dot_tree.dot";
+			
+			
+			
+			print "outdir + suffix_Dir ", $outdir.$Suffix_Dir,"/\n";
+			$outfilePF = $outdir.$Suffix_Dir."/".$Suffix_Dir."_dot_tree.dot";
 			open(O, ">", $outfilePF) or die $!;
 			
 			printf O ("graph graphname{\n\nnode [ fontsize=25,shape=record,nodesep=0,];edge [fontsize=25, decorate=true, penwidth=3];graph [ranksep=0];rankdir=LR;ratio=\"auto\";\n\n");
@@ -304,25 +330,27 @@ sub Summarize
 			
 			my $file;
 			
-				
+					system("echo",$outdir."PF/");
 				#print "innerhalb perl\n";
 				#`echo Außerhalb von perl\n`;
-			#system("echo ergebnis von pwd");
+			system("echo ergebnis von pwd");
+			system("echo $outdir"."PF/");
+			
 			if ($Suffix eq "PF.out")
 			{
-				system("dot -Tsvg PF.out_dot_tree.dot > PF_output_mit_rank.svg");
-				$file = "PF_output_mit_rank.svg";
-			
+				system("dot -Tsvg $outdir"."PF/PF_dot_tree.dot > $outdir"."PF/PF_output_mit_rank.svg");
+				$file = $outdir."PF/"."PF_output_mit_rank.svg";
 			}
+			
 			elsif ($Suffix eq "PFb.out")
 			{
-				system("dot -Tsvg PFb.out_dot_tree.dot > PFb_output_mit_rank.svg");
-				$file = "PFb_output_mit_rank.svg";
+				system("dot -Tsvg $outdir"."PFb/PFb_dot_tree.dot > $outdir"."PFb/PFb_output_mit_rank.svg");
+				$file = $outdir."PFb/"."PFb_output_mit_rank.svg";
 			}	
 			elsif ($Suffix eq "PSb.out")
 			{
-				system("dot -Tsvg PSb.out_dot_tree.dot > PSb_output_mit_rank.svg");
-				$file = "PSb_output_mit_rank.svg";
+				system("dot -Tsvg $outdir"."PSb/PSb_dot_tree.dot > $outdir"."PSb/PSb_output_mit_rank.svg");
+				$file = $outdir."PSb/"."PSb_output_mit_rank.svg";
 			}	
 		
 			print "\n\n";
@@ -352,8 +380,10 @@ sub Summarize
 			print "\n\n";
 			
 		#	print " PF tree: \n", Dumper(\%PFtree);
+
+
 			
-			$outfilePF = "all_dot_tree.dot";
+			$outfilePF = $outdir."all_dot_tree.dot";
 			open(O, ">", $outfilePF) or die $!;
 			
 			printf O ("graph graphname{\n\nnode [ fontsize=25,shape=record,nodesep=0,];edge [fontsize=25, decorate=true, penwidth=3];graph [ranksep=0];rankdir=LR;ratio=\"auto\";\n\n");
@@ -440,10 +470,17 @@ sub Summarize
 			
 				#~ #print "innerhalb perl\n";
 				#~ #`echo Außerhalb von perl\n`;
-				#~ #system("echo ergebnis von pwd");
-			 system("dot -Tsvg all_dot_tree.dot > all_output_mit_rank.svg");
+			#system("echo ergebnis von pwd");
+			#system("pwd");
+			#system("resultdir:\n");
+			#$'=""
+			#system("echo",$outdir."PF/");
+#exit;		
+
 		
-	
+			 system("dot -Tsvg $outdir"."all_dot_tree.dot > $outdir"."all_output_mit_rank.svg");
+		
+
 	
 	
 	
@@ -550,17 +587,17 @@ sub Summarize
 			
 			############## 
 			my $outfilePF ;
-				if( $outfile =~ /\./)
+				if( $outdir =~ /\./)
 				{
-					$outfilePF = substr($outfile,0, rindex( $outfile, '.') );			#rindex STR,SUBSTR
+					$outfilePF = substr($outdir,0, rindex( $outdir, '.') );			#rindex STR,SUBSTR
 					$outfilePF = $outfilePF.$Suffix;				#Works just like index except that it returns the position of the last occurrence of SUBSTR in STR. If POSITION is specified,returns the last occurrence beginning at or before that position.
 		
 					
 				}
 				else
-				{$outfilePF = $outfile.$Suffix;}		
+				{$outfilePF = $outdir.$Suffix;}		
 					
-			print "geöffnet wird: ", $sum_PF, "  aber outfile= ", $outfilePF, "\n";		
+			print "geöffnet wird: ", $sum_PF, "  aber outdir= ", $outfilePF, "\n";		
 
 	
 	
@@ -654,7 +691,7 @@ sub Summarize
 			################################# fertige lst_4R_ schreiben
 					
 						
-			$outfilePF = $Suffix."_lst_4R.dat";
+			$outfilePF = $outdir.$Suffix."_lst_4R.dat";
 			
 			print "lst_4R wird gespeichert in:", $outfilePF,"\n";
 			
@@ -955,14 +992,14 @@ sub Summarize
 		
 		#~ my $outfilePS;
 		
-		#~ if( $outfile =~ /\./)
+		#~ if( $outdir =~ /\./)
 		#~ {
-			#~ $outfilePS = substr($outfile,0, rindex( $outfile, '.') );
+			#~ $outfilePS = substr($outdir,0, rindex( $outdir, '.') );
 			#~ $outfilePS = $outfilePS."_PS.sum";
 			
 		#~ }
 		#~ else
-		#~ {	$outfilePS = $outfile."_PS.sum";}
+		#~ {	$outfilePS = $outdir."_PS.sum";}
 		
 		#~ open(O, ">", $outfilePS) or die $!;
 		#~ #for($i=0; $i<$nodes_n; $i++) 
@@ -1105,14 +1142,14 @@ sub Summarize
 		#~ }	
 		
 		#~ my $outfilePSb;
-		#~ if( $outfile =~ /\./)
+		#~ if( $outdir =~ /\./)
 		#~ {
-			#~ $outfilePSb = substr($outfile,0, rindex( $outfile, '.') );
+			#~ $outfilePSb = substr($outdir,0, rindex( $outdir, '.') );
 			#~ $outfilePSb = $outfilePSb."_PSb.sum";
 			
 		#~ }
 		#~ else
-		#~ { $outfilePSb = $outfile."_PSb.sum";}
+		#~ { $outfilePSb = $outdir."_PSb.sum";}
 			
 		#~ open(O, ">", $outfilePSb) or die $!;
 		
@@ -1240,14 +1277,14 @@ sub Summarize
 		#~ }	
 	
 		#~ my $outfilePFb;
-		#~ if( $outfile =~ /\./)
+		#~ if( $outdir =~ /\./)
 		#~ {
-			#~ $outfilePFb = substr($outfile,0, rindex( $outfile, '.') );
+			#~ $outfilePFb = substr($outdir,0, rindex( $outdir, '.') );
 			#~ $outfilePFb = $outfilePFb."_PFb.sum";
 			
 		#~ }
 		#~ else
-		#~ { $outfilePFb = $outfile."_PFb.sum";}
+		#~ { $outfilePFb = $outdir."_PFb.sum";}
 	
 	
 		#~ open(O, ">", $outfilePFb) or die $!;
@@ -1315,7 +1352,7 @@ summarizing the data output files of ePoPE.
 
 =head1 SYNOPSIS
 
-ePoPE.summarize.pl [-d DIR/ -o FILE ]
+ePoPE.summarize.pl [-d DIR/ -o FILE -r DIR/ ]
  
 
 
@@ -1330,6 +1367,10 @@ Directory that contains the outputfiles from a ePoPE run
 =item B<-o FILE>
 
 the output file for the final summarized tree data.
+
+=item B<-r DIR/>
+
+the results DIR, where the final tree and barplots are saved to.
 
 =item B<--help | -h>
 

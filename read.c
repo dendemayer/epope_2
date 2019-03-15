@@ -922,7 +922,7 @@ void gl_buildTree(char *filename)
 	{
 		splitLine = gl_splitString(line, ' ',&n);
 		strcpy(treeN[nodes].o,splitLine[0]);
-		printf("treeN[%d].o=%s\n",nodes,treeN[nodes].o);
+		//printf("treeN[%d].o=%s\n",nodes,treeN[nodes].o);
 		read = sscanf(splitLine[2], "%d", &treeN[nodes].n);    assert(read);	//
 		read = sscanf(splitLine[4], "%d", &par);    assert(read);
 		if(par == -1) 

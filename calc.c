@@ -61,7 +61,8 @@ void gl_calc(struct gl_arguments ga)
   S = (float **) calloc(kMax+1, sizeof(float *));				// calloc für arrays, erstes argument gibt array länge an
   for(i=0; i<=kMax; i++) {
     S[i] = (float *) calloc(nodesN+1, sizeof(float));
-    for(j=0; j<nodesN; j++) {
+    for(j=0; j<nodesN; j++) 
+    {
       S[i][j] = -1.; /* preorder does not matter jet */
     }
   }
@@ -81,11 +82,11 @@ void gl_calc(struct gl_arguments ga)
 			}
 		} 
 	}
-			/*
-							printf("\nScore array after initialization (before forward recursion):\n"); 
-													printf("\nS_kl:\n");
-													gl_printS(S, kMax+1, nodesN);
-			*/
+			
+							//~ printf("\nScore array after initialization (before forward recursion):\n"); 
+													//~ printf("\nS_kl:\n");
+													//~ gl_printS(S, kMax+1, nodesN);
+			
 	int c,pos, cpos, mink;
 	float minscore,score,sum;
 	
@@ -169,9 +170,9 @@ void gl_calc(struct gl_arguments ga)
 						printf("\nS_kv:\n");
 						gl_printS(S, kMax+1, nodesN);
 			#endif			
-		//printf("Score array after forward recursion:\n");
-			//		printf("\nS_kv:\n");
-				//	gl_printS(S, kMax+1, nodesN);			
+		//~ printf("Score array after forward recursion:\n");
+		//~ printf("\nS_kv:\n");
+		//~ gl_printS(S, kMax+1, nodesN);			
 	
   /* adjust gain and loss of complete gene family */
 	int jP;
@@ -214,9 +215,12 @@ void gl_calc(struct gl_arguments ga)
 	//fprintf(stdout,"Optimal score at LCA=S[%d][%d]: %.2f (# of miRNAs: %d)\n\n",i,lca_pos,SS,i);
 	/* i carries score of inner node */
 	/* add gain of whole family */
-	if(treeN[lca_pos].p == NULL && i == 0) { // members of this family are not in tree
+	if(treeN[lca_pos].p == NULL && i == 0) 
+	{ // members of this family are not in tree
 		treeN[lca_pos].gainFam = 0;
-	} else {
+	} 
+	else 
+	{
 		treeN[lca_pos].gainFam = 1;
 	}
 	
@@ -245,12 +249,10 @@ void gl_calc(struct gl_arguments ga)
 
 					//printf("mir at lca: %d\n",treeN[j].m); exit(0);
 	for(c=0; c<nodesN; c++) 
-	{
-		//werte vor bwrecursion:
+	{	//werte vor bwrecursion:
 			    	//printf("p: %d l: %d m: %d seenBW: %d (%s)\n",c,treeN[c].n,treeN[c].m,treeN[c].seenBW,treeN[c].o);
 		if(treeN[c].seenBW == 1) { seenNodes++; } /* every leaf and all nodes outside of tree rooted at lca need not to be visited */
 	}
-
 					// printf("dre: %d (%s) (seenBW: %d)\n",treeN[192].m,treeN[192].o,treeN[192].seenBW);     
 	while(seenNodes <= nodesN) 
 	{
@@ -280,13 +282,15 @@ void gl_calc(struct gl_arguments ga)
 				//	j = (treeN[j].p)->pInT;
 				j = treePosN[(treeN[j].p)->n];
 				goto nextWhile;
-			} else 
+			} 
+			else 
 			{
 				//printf("breaking\n");
 				break;
 			}
 		
-		} else 
+		} 
+		else 
 		{ /* node to be checked */
 	
 			/* if not checked leave */
@@ -297,17 +301,34 @@ void gl_calc(struct gl_arguments ga)
 			{	 
 				/* since I select only the minimum (over k) of S[k][j] in fw recursion,
 				I can do this here as well */
-				/* yes, but include delta function!! */ // warum denn hier?
+				/* yes, but include delta function!! */ // warum denn hier? ---> WICHTIG!! bei sankoff ist beim backtrace wichtig wo vater war wenn kind gescored wird
+				//also delta fkt in fw recursion UND in backtrace!!!!
 				minscore = inf;
 				mink = kMax;
 				for(k=0; k<=kMax; k++) 
 				{
-					if(S[k][j]  < minscore) 
+					//printf("k: %d  j: %d treeN[%d].o = %s  \n",k,j,j,treeN[j].o );
+					if(S[k][j] + gl_delta((treeN[j].p)->m,k,j) < minscore) 
 					{
-						minscore = S[k][j];
+						minscore = S[k][j] +  gl_delta((treeN[j].p)->m,k,j);
+						//~ printf(" S[%d][%d]: [%f] ", k,j, S[k][j]);
+						//~ printf("(treeN[%d].p)->m [%d] +  ",j,(treeN[j].p)->m);
+						//~ printf("gl_delta( %d,%d,%d):  ",  treeN[j].p->m ,k,i);
+						//~ printf(" [%f] ",gl_delta((treeN[j].p)->m,k,j));
+						//~ printf(" = minscore = [%f] \n" ,minscore);
 						
+												
 						mink = k;
 					}
+					
+					//printf("treeN[j].p->m:  %d, k: %d , j: %d \n",(treeN[j].p)->m,k,j);
+					//printf("mink: %d at %s \n",mink,treeN[j].o);
+					//~ if(S[k][j]  < minscore) 
+					//~ {
+						//~ minscore = S[k][j];
+						
+						//~ mink = k;
+					//~ }
 					
 				}
 				i = mink;
@@ -326,50 +347,6 @@ void gl_calc(struct gl_arguments ga)
 				treeN[j].m = i;
 				
 			
-					/* gabor:
-					* Problem: Dollo wird nicht immer beachtet, in manchen situationen, wo alle kinder leaves sind und keine gene haben wird
-					* trotzdem am vaterknoten k!=0 gesetzt...
-					* an der stelle ist der fehler schon passiert, man kann noch mal childs checken, 
-					* wenn alle childs k=0 haben, muss auch aktueller (vater)knoten auf 0 gesetzt werden
-					*/
-					/*								lca	(label)
-			
-											treePosN[lca]  (Zeile)   
-									treeN[			Zeile				].pInP  (pInP)
-					treeOrderN	[				pInP++								] (label)		//hier kann man pInP erhöhen um in preorder abzulaufen
-			treePosN[									label										] (Zeile)
-			//~ */	
-														
-							//~ int testleave=0;
-							//~ if (treeN[j].nc != 0 )	//knoten hat Kinder
-							//~ {	//test ob alle kinder leaves sind UND diese leaves alle 0 gene haben
-								
-								//~ for (int i=0;i<treeN[j].nc;i++)
-								//~ {	
-									//~ if (treeN[treePosN[treeN[j].c[i]]].c[0]==(-1) && treeN[treePosN[treeN[j].c[i]]].m==0)		
-									//~ {	//kind ist leave								&& leave hat keine mirs
-										//~ testleave=testleave+1;
-										//~ //printf("%s hat %d mirs\n",treeN[treePosN[treeN[j].c[i]]].o, treeN[treePosN[treeN[j].c[i]]].m );
-										
-									//~ }
-								//~ }
-								//~ if (testleave==treeN[j].nc)	//alle kinder sind leaves und all diese leaves haben 0 gene--> k kann auf 0 gesetzt werden
-								//~ {
-									//~ //printf("node der nur leaves als child hat, die KEINE mirs haben: %s\n",treeN[j].o);
-									//~ treeN[j].m = 0;
-									//~ treeN[j].gain = 0;
-									
-								//~ }   
-								//~ testleave=0;
-							//~ }	
-							
-			
-				
-								
-			
-		
-		
-																
 			treeN[j].seenBW = 1;
 			seenNodes++;
 			goto nextWhile;
@@ -382,6 +359,8 @@ void gl_calc(struct gl_arguments ga)
 		 *  
 		 * */
 		 printf("anzahl knoten: %d\n",nodesN);
+		 
+		 //printf("m von B: 0 k von 0 Spalte C 5   \n");
 			 
 			//gl_printTreePS(lca, psfname);
 			
@@ -747,7 +726,7 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 									//printf("sum_j: %f",sum_j); 
 									sum_j=sum_j + Z[j][treePosN[parent_p->c[sib_u]]] * exp((  (-1/bet)*abs(i-j)));
 									//printf(" + Z[j][treePosN[treeOrderN[sib_u]]] %f * e^(-%d) %f  = %f \n", Z[j][treePosN[parent_p->c[sib_u]]],abs(i-j),exp((bet*abs(i-j))), sum_j);
-								
+									
 								}
 								//printf("prod_sib_w %f ", prod_sib_w);
 								prod_sib_w= prod_sib_w*sum_j;
@@ -819,8 +798,8 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 	gl_printS(Zaussen, kMax+1, nodesN);
 	#endif
 	
-	printf("\nZ_aussen array after calculation: \n"); 
-	gl_printS(Zaussen, kMax+1, nodesN);
+	//printf("\nZ_aussen array after calculation: \n"); 
+	//gl_printS(Zaussen, kMax+1, nodesN);
 	//funktionsaufruf für gain/loss nach fertiger PF:
 	pfgl(Zaussen, kMax, nodesN, lca, ga);
 	
@@ -1152,11 +1131,15 @@ float gl_delta(int i, int k, int node)
   //~ return delta;
   
   
-		float inf=9999.; 
+  //i  		-> k vom vater
+  //k  		-> k vom child
+  //node	-> spalte u
+  
+		//float inf=9999.; 
 		float delta=0.;
 		int x;
 		
-		if(i==0 && k == 0) { delta = inf; }
+		if(i==0 && k == 0) { delta = 0.; }
 		else
 		{ 
 			{
@@ -2466,7 +2449,7 @@ void gl_printS(float **S, int m, int n) {
   for(i=0; i<m; i++) {
     printf("%3d:\t",i);
     for(j=0; j<n; j++) {
-      printf("%5.7f\t", S[i][j]);
+      printf("%5.2f\t", S[i][j]);
     }
     printf("\n");
   }
