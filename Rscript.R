@@ -12,12 +12,11 @@ cat("third argument:\t\n", args[3],"\n")
 lst4R.PF_P <- read.delim(args[1]) 
 lst4R.PF <- read.delim(args[2])
 lst4R.PS <- read.delim(args[3])
-#lst4R.PF_P <- PF.out_lst_4R
-#lst4R.PF <- PFb.out_lst_4R
-#lst4R.PS <- PSb.out_lst_4R
-#cat("lst4R.PF_P\n")
-#View(lst4R.PF_P)
 
+#cat("lst4R.PF_P\n")
+View(lst4R.PF_P)
+View(lst4R.PF)
+View(lst4R.PS)
 cat("outcomes for the whole tree: \n\n")
 
 sumPF_P_genes=sum(lst4R.PF_P$genes)
@@ -66,6 +65,8 @@ names(total)=c("gain","loss","gain + loss")
 path=paste(dirname(args[1]),"/totals_whole_tree.svg")
 
 path2=gsub("[[:blank:]]", "", path)
+
+
 #cat("path2",path2, "\n")
 
 #pdf("~/epope_2_paper/epope_bash_run/results_for_bash_test/totals_whole_tree.pdf")
@@ -269,12 +270,16 @@ path2=gsub("[[:blank:]]", "", path)
 #für ganzen baum: 
 svg(path2,height=32 ,width =5  )
 
+
 #par(mar=c(5,4,4,4), oma=c(5,0,0,0))
 
 #für ganzen baum: 
-par(mar=c(5,4,4,4), oma=c(5,4,4,4),cex=1)
+#par(mar=c(5,4,4,4), oma=c(5,4,4,4),cex=0.6)
 #für kleinen baum
 #par(mar=c(5,4,4,4), oma=c(5,4,4,4),cex=1.4,font=1)#font für legend
+#für tunicaten baum
+par(mar=c(5,4,4,4), oma=c(5,4,4,4),cex=0.6,font=1)#font für legend
+
 barplot( grafik_gain_3,horiz=T, beside=T, xlim=c(-100,100),border=F, las=1,col = c("#006600","blue","red"))
 
 
@@ -286,7 +291,8 @@ barplot(grafik_loss_3, horiz=T, beside=T, las=1,add=T,border=F,xaxt="n",yaxt="n"
         xlab = "loss and gain in %",
         main=mainhead2)
 legend("bottomright",legend=c("Sankoff", "Partition Function", "Partition Function -P"),col = c("red","blue","#006600")
-        ,fill = c("red","blue","#006600"),cex = 0.7)
+        ,fill = c("red","blue","#006600"),cex = 1.1)
+
 #für kleinen baum: cex=0.65
 #für ganzen baum: cex=1.1
 abline(v=0)

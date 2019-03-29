@@ -170,9 +170,9 @@ void gl_calc(struct gl_arguments ga)
 						printf("\nS_kv:\n");
 						gl_printS(S, kMax+1, nodesN);
 			#endif			
-		//~ printf("Score array after forward recursion:\n");
-		//~ printf("\nS_kv:\n");
-		//~ gl_printS(S, kMax+1, nodesN);			
+		printf("Score array after forward recursion:\n");
+		printf("\nS_kv:\n");
+		gl_printS(S, kMax+1, nodesN);			
 	
   /* adjust gain and loss of complete gene family */
 	int jP;
@@ -204,8 +204,8 @@ void gl_calc(struct gl_arguments ga)
   //~ {
 	for(k=0; k<=kMax; k++) 
 	{ 
-		if(S[k][lca_pos] <= SS) 
-		{ 
+		if(S[k][lca_pos] < SS) //an LCA kann delta bei backtrace nicht angeweendet werden, da vor LCA, evt Wurzel, noch keine events stattfinden konnten wird das erste minimum gewählt
+		{ 							//als < und nicht <= 
 			SS = S[k][lca_pos];
 			//printf(" SS= %f lca_pos: %d\n",SS,lca_pos);
 			
@@ -307,7 +307,7 @@ void gl_calc(struct gl_arguments ga)
 				mink = kMax;
 				for(k=0; k<=kMax; k++) 
 				{
-					//printf("k: %d  j: %d treeN[%d].o = %s  \n",k,j,j,treeN[j].o );
+					printf("k: %d  j: %d treeN[%d].o = %s  \n",k,j,j,treeN[j].o );
 					if(S[k][j] + gl_delta((treeN[j].p)->m,k,j) < minscore) 
 					{
 						minscore = S[k][j] +  gl_delta((treeN[j].p)->m,k,j);
@@ -338,7 +338,7 @@ void gl_calc(struct gl_arguments ga)
 			if(j == lca_pos || treeN[j].p == NULL) { m = -i; }
 			else { m = (treeN[j].p)->m - i; }
 		
-			//printf("j:%d ist %s  k:%d m: %d\n",j,treeN[j].o,i,m); 
+			printf("j:%d ist %s  k:%d m: %d\n",j,treeN[j].o,i,m); 
 			/* adjust gain/loss */
 			if(m < 0) { treeN[j].gain = abs(m); }
 			else { treeN[j].loss = m; }
@@ -596,6 +596,9 @@ void pf(int kMax, struct gl_arguments ga, int lca) //pf(int kMax) wird aufgerufe
 		 printf("\nZ_kv:\n");
 		 gl_printS(Z, kMax+1, nodesN);
 	#endif
+	//~ printf("\nZ array after FR :\n"); 
+		 //~ printf("\nZ_kv:\n");
+		 //~ gl_printS(Z, kMax+1, nodesN);
 	
 	printf("bet=%f\n",bet);
 	

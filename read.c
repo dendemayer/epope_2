@@ -1303,7 +1303,7 @@ void gl_readSummaryTreeN(char * file) {
 
 struct gl_arguments getFilenameExtension(gl_arguments ga)
  {
-	//printf("z: %d\t b: %d\t filename: %s\n",ga.z, ga.b, ga.outfile);
+	printf("z: %d\t b: %d\t filename: %s\n",ga.z, ga.b, ga.outfile);
 	
 	if(ga.z==1)   //
 	{
@@ -1348,11 +1348,11 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			{
 				if(ga.psfile[i]=='.')
 				{
-					//printf("point found at position %d\n",i);
+					printf("point found at position %d\n",i);
 					point=i;
 				}
 			}
-			if(point==0 || ga.psfile[point-1]=='.' )
+			if( point==0 || ga.psfile[point-1]=='.' )
 			{
 				point=strlen(ga.psfile);
 			}	
@@ -1372,7 +1372,7 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			
 			
 		}
-		if (ga.psfile == NULL) //psout_file nicht vorhanden
+		if (ga.psfile == NULL) //psout_file nicht vorhanden, nimm infile
 		{
 			int point =0;
 			for(int i=0; i<strlen(ga.infile); i++)
@@ -1383,12 +1383,12 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 					point=i;
 				}
 			}
-			if(point==0 || ga.psfile[point-1]=='.' )
+			if(point==0 || ga.infile[point-1]=='.' )
 			{
 				point=strlen(ga.infile);
 			}	
 			
-			char newflag [1000] ;  
+			char *newflag=(char*)calloc(1000,sizeof(char*));   
 			strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
 		//	printf("flag until last point: %s\n",newflag);
@@ -1398,6 +1398,7 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			
 			ga.psfileFlag = (char *) calloc(strlen(newflag) + 1, sizeof(char)); 
 			strncpy(ga.psfileFlag,newflag, strlen(newflag)+1);
+			free(newflag);	
 		}
 		
 		
@@ -1740,13 +1741,11 @@ struct gl_arguments getFilenameExtension(gl_arguments ga)
 			{
 				point=strlen(ga.infile);
 			}	
-		//	printf("last point at %d\n", point);
+			//printf("last point at %d\n", point);
 			
 			char *newflag=(char*)calloc(1000,sizeof(char*)); 
 			strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
-			
-			
-			//char newflag [1000] ;  
+						
 			//strncpy(newflag,ga.infile,point);		//outfile bis letzten punkt
 			newflag[point]='\0';
 		//	printf("flag until last point: %s\n",newflag);

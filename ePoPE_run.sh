@@ -3,9 +3,9 @@
 clear;
 
 PATHEPOPE="/homes/biertruck/gabor/epope_2_paper/epope_2/"		#DIR
-ALIGN="/homes/biertruck/gabor/epope_2_paper/epope_2/example/mipf_temp/"		#DIR
-RESULTS="/homes/biertruck/gabor/epope_2_paper/epope_2/example/Results/"		#DIR
-TREE="/homes/biertruck/gabor/epope_2_paper/epope_2/example/Metazoa.tree.build.NGA.new.dat"	#FILE
+ALIGN="/homes/biertruck/gabor/epope_2_paper/MIPF/"		#DIR
+RESULTS="/homes/biertruck/gabor/epope_2_paper/ergebnisse/delta_ok_all_alignments/"		#DIR
+TREE="/homes/biertruck/gabor/epope_2_paper/epope_bash_run/collapsed_tree.dat"	#FILE
 
 echo -e "path for epope binary is:\t $PATHEPOPE "
 echo -e "path for alignments is:\t\t $ALIGN "
@@ -117,5 +117,5 @@ Rscript ~/epope_2_paper/epope_2/Rscript.R "$RESULTS""PF.out_lst_4R.dat" "$RESULT
 mv "$RESULTS"PFb*dat "$RESULTS"PFb/
 mv "$RESULTS"PF*dat "$RESULTS"PF/
 mv "$RESULTS"PSb*dat "$RESULTS"PSb/
-rm $RESULTS*.out
-rm $RESULTS*.ps
+#rm $RESULTS*.out
+#rm $RESULTS*.ps
