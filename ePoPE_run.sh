@@ -3,9 +3,9 @@
 clear;
 
 PATHEPOPE="/homes/biertruck/gabor/epope_2_paper/epope_2/"		#DIR
-ALIGN="/homes/biertruck/gabor/epope_2_paper/MIPF/"		#DIR
-RESULTS="/homes/biertruck/gabor/epope_2_paper/ergebnisse/delta_ok_all_alignments/"		#DIR
-TREE="/homes/biertruck/gabor/epope_2_paper/epope_bash_run/collapsed_tree.dat"	#FILE
+ALIGN="/homes/biertruck/gabor/epope_2_paper/epope_2/example/alignments/"		#DIR
+RESULTS="/homes/biertruck/gabor/epope_2_paper/epope_2/example/results/"		#DIR
+TREE="/homes/biertruck/gabor/epope_2_paper/epope_2/example/collapsed_tree.dat"	#FILE
 
 echo -e "path for epope binary is:\t $PATHEPOPE "
 echo -e "path for alignments is:\t\t $ALIGN "
@@ -55,21 +55,13 @@ read -p "Press [Enter] key to start calculations..."
 
 
 
-#for i in "$ALIGN"* ; do echo "$datei" "$i" "$TREE" "$RESULTS""${i##*/}" "$RESULTS""${i##*/}" ; done
 
 
-# doing the main epope calculation, parsimony and pf: 
+for i in "$ALIGN"* ; do "$datei" -i "$i" -t "$TREE" -o "$RESULTS""${i##*/}" -p "$RESULTS""${i##*/}" -z -P ; done
 
-#for i in "$ALIGN"*; do "$datei" -i "$i" -t "$TREE" -o "$RESULTS""${i##*/}" -p "$RESULTS""${i##*/}" -b; done
+for i in "$ALIGN"* ; do "$datei" -i "$i" -t "$TREE" -o "$RESULTS""${i##*/}" -p "$RESULTS""${i##*/}" -b; done
 
 
-for i in "$ALIGN"* ; do "$datei" -i "$i" -t "$TREE" -o "$RESULTS""${i##*/}" -p "$RESULTS""${i##*/}" -z -P  ; done
-
-for i in "$ALIGN"* ; do "$datei" -i "$i" -t "$TREE" -o "$RESULTS""${i##*/}" -p "$RESULTS""${i##*/}" -b ; done
-
-#for i in "$ALIGN"* ; do "$datei" -i "$i" -t "$TREE" -o "$RESULTS""${i##*/}" -p "$RESULTS""${i##*/}" ; done
-
-#checking whether the summarize script is located in the ePoPE folder as it should be:
 
 if [ -f "$PATHEPOPE""ePoPE.summarize.pl" ]; then
        echo -e "\nfound the summarize perl script: " "$PATHEPOPE""ePoPE.summarize.pl"
@@ -117,5 +109,5 @@ Rscript ~/epope_2_paper/epope_2/Rscript.R "$RESULTS""PF.out_lst_4R.dat" "$RESULT
 mv "$RESULTS"PFb*dat "$RESULTS"PFb/
 mv "$RESULTS"PF*dat "$RESULTS"PF/
 mv "$RESULTS"PSb*dat "$RESULTS"PSb/
-#rm $RESULTS*.out
-#rm $RESULTS*.ps
+rm $RESULTS*.out
+rm $RESULTS*.ps

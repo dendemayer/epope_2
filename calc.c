@@ -170,9 +170,9 @@ void gl_calc(struct gl_arguments ga)
 						printf("\nS_kv:\n");
 						gl_printS(S, kMax+1, nodesN);
 			#endif			
-		printf("Score array after forward recursion:\n");
-		printf("\nS_kv:\n");
-		gl_printS(S, kMax+1, nodesN);			
+		//~ printf("Score array after forward recursion:\n");
+		//~ printf("\nS_kv:\n");
+		//~ gl_printS(S, kMax+1, nodesN);			
 	
   /* adjust gain and loss of complete gene family */
 	int jP;
@@ -307,7 +307,7 @@ void gl_calc(struct gl_arguments ga)
 				mink = kMax;
 				for(k=0; k<=kMax; k++) 
 				{
-					printf("k: %d  j: %d treeN[%d].o = %s  \n",k,j,j,treeN[j].o );
+					//printf("k: %d  j: %d treeN[%d].o = %s  \n",k,j,j,treeN[j].o );
 					if(S[k][j] + gl_delta((treeN[j].p)->m,k,j) < minscore) 
 					{
 						minscore = S[k][j] +  gl_delta((treeN[j].p)->m,k,j);
@@ -338,7 +338,7 @@ void gl_calc(struct gl_arguments ga)
 			if(j == lca_pos || treeN[j].p == NULL) { m = -i; }
 			else { m = (treeN[j].p)->m - i; }
 		
-			printf("j:%d ist %s  k:%d m: %d\n",j,treeN[j].o,i,m); 
+			//printf("j:%d ist %s  k:%d m: %d\n",j,treeN[j].o,i,m); 
 			/* adjust gain/loss */
 			if(m < 0) { treeN[j].gain = abs(m); }
 			else { treeN[j].loss = m; }
@@ -441,7 +441,9 @@ void pf(int kMax, struct gl_arguments ga, int lca) //pf(int kMax) wird aufgerufe
 			printf("\nZ_kl:\n");
 			gl_printS(Z, kMax+1, nodesN);
 		#endif		
-	
+	//~ printf("\nZ array after initialization (before forward recursion): \n"); 
+			//~ printf("\nZ_kl:\n");
+			//~ gl_printS(Z, kMax+1, nodesN);
 	////////////////forward recursion///////////////////////////
 	
 	
@@ -515,18 +517,34 @@ void pf(int kMax, struct gl_arguments ga, int lca) //pf(int kMax) wird aufgerufe
 					}
 					tempscoretotal = tempscoretotal + tempscoresum;	
 				}
-				//hier sind alle scores aller u's eines v's ausummiert, setzen der skalierten scores in Z:
+				//hier sind alle scores aller u's eines v's aufsummiert, setzen der skalierten scores in Z:
+				
 				for (y=0; y<childn; y++) 
 				{
 					for (int zeile = 0; zeile <=kMax; zeile++)
 					{
-						Z[zeile][treePosN[treeN[i].c[y]]] = Z[zeile][treePosN[treeN[i].c[y]]] / tempscoretotal;
+						if(isnan(Z[zeile][treePosN[treeN[i].c[y]]] / tempscoretotal))
+							{//printf("NaN bei pf %s\n",treeN[treePosN[treeN[i].c[y]]].o);
+							  Z[zeile][treePosN[treeN[i].c[y]]] =0;
+							continue;}
+						else
+						{
+							Z[zeile][treePosN[treeN[i].c[y]]] = Z[zeile][treePosN[treeN[i].c[y]]] / tempscoretotal;
+						}
+						//printf("alter score bei Z[%d][%d]= %f wird gerechnet durch %f\n", zeile, treePosN[treeN[i].c[y]], Z[zeile][treePosN[treeN[i].c[y]]], tempscoretotal);
 						//printf("neuer score bei Z[%d][%d]= %f\n", zeile, treePosN[treeN[i].c[y]], Z[zeile][treePosN[treeN[i].c[y]]]);
-					}	
+					}
+						
 				}
 				//printf("wir sind hier bei: %s\n", treeN[i].o);
 			}	
 				
+				
+			//~ printf("\nZ array after FR :\n"); 
+		 //~ printf("\nZ_kv:\n");
+		 //~ gl_printS(Z, kMax+1, nodesN);
+	
+		
 			//printf(" kind treePosN von %s ist %d\n ", treeN[i].o, treeN[treePosN[treeN[i].c[0]]].n);
 			//printf("was haben wir bis jetzt bei i = %d:\n\n",i);
 			//gl_printS(Z, kMax+1, nodesN); 
@@ -545,16 +563,20 @@ void pf(int kMax, struct gl_arguments ga, int lca) //pf(int kMax) wird aufgerufe
 					{					//hier Z[kchild][j(kindspalte)]
 						
 						//printf("\n\ne^((-1/bet [%f])[%f] * (%d-%d[%d]) [%f]\n\n",bet, (-1/bet), k,kchild,abs(k-kchild), exp((-1/bet)*abs(k-kchild))   ) ;
+						
 						//printf(" bet:%f\n", bet );
 						
 						tempSum= tempSum+Z[kchild][treePosN[treeN[i].c[j]]]*exp(((-1/bet)*abs(k-kchild)));   //version ohne delta funktion
-						
+						if (isnan(tempSum))
+						{
+							//printf("nan bei %s\n",treeN[treePosN[treeN[i].c[j]]].o);
+						}
 						//tempSum= tempSum+Z[kchild][treePosN[treeN[i].c[j]]]*exp(bet*gl_delta(k,kchild,treePosN[treeN[i].c[j]]));
+						//printf("%f\n\n", Z[kchild][treePosN[treeN[i].c[j]]]);
 						
-						
-						//~ printf("Z[kchild][treePosN[treeN[%d].c[%d]]] = Z[%d][%d]%f\n",kchild,treePosN[treeN[i].c[j]] ,kchild,treePosN[treeN[i].c[j]], Z[kchild][treePosN[treeN[i].c[j]]]);
-						//~ printf("i:%d\n", i);
-						//~ printf("treeN[%d].P:%d\n",i,treeN[i].P);
+						 //printf("Z[kchild][treePosN[treeN[%d].c[%d]]] = Z[%d][%d]%f\n",kchild,treePosN[treeN[i].c[j]] ,kchild,treePosN[treeN[i].c[j]], Z[kchild][treePosN[treeN[i].c[j]]]);
+						 //printf("i:%d\n", i);
+						 //printf("treeN[%d].P:%d\n",i,treeN[i].P);
 						kchild++;
 					}
 					//hier ist eine kindspalte fertig aufsummiert
@@ -572,7 +594,7 @@ void pf(int kMax, struct gl_arguments ga, int lca) //pf(int kMax) wird aufgerufe
 		//printf("Z[%d][%d]=%f\n",k,i,Z[k][i]);	
 		if (isnan(Z[k][i]))
 		{
-			printf(" this is a nan:%f\n",Z[k][i]);
+			printf(" nan at k=%d  i=%d is a nan:%f\n",k,i,Z[k][i]);
 			Z[k][i] = 0.;
 			printf(" now it's:%f\n", Z[k][i]);
 		}
@@ -600,7 +622,7 @@ void pf(int kMax, struct gl_arguments ga, int lca) //pf(int kMax) wird aufgerufe
 		 //~ printf("\nZ_kv:\n");
 		 //~ gl_printS(Z, kMax+1, nodesN);
 	
-	printf("bet=%f\n",bet);
+	//~ printf("bet=%f\n",bet);
 	
 	
 		pfb(kMax,nodesN, Z, ga, lca);
@@ -774,7 +796,20 @@ void pfb(int kMax,int nodesN, float **Z, struct gl_arguments ga, int lca )
 			    	//jetzt steht erst mal summe je spalte, für jedes k wahrscheinlichkeit ausrechnen:
 			    	for (int pk=0; pk<=kMax;pk++)
 			    	{
-			    		Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]= Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]/tempsum;
+						if (isnan(Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]/tempsum))
+						{
+							//printf("NaN bei pfb: %s\n",treeN[treePosN[parent_p->c[sib_skalieren]]].o);
+							//~ int alter;
+							//~ printf("Wie alt sind sie? ");
+							//~ scanf("%d", &alter);
+							//~ printf("\nIn %d Jahren sind Sie 100!\n", 100-alter);
+							 Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]=0;
+							continue;}
+						else
+						{
+							Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]= Zaussen[pk][treePosN[parent_p->c[sib_skalieren]]]/tempsum;
+							
+						}	
 					}
 					
 					//printf("sind gerade bei: %s\n",treeN[treePosN[parent_p->c[sib_u1]]].o);	

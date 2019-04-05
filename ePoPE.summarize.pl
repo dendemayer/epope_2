@@ -478,7 +478,7 @@ sub Summarize
 #exit;		
 
 		
-			 system("dot -Tsvg $outdir"."all_dot_tree.dot > $outdir"."all_output_mit_rank.svg");
+			 system("dot -Tsvg $outdir"."all_dot_tree.dot > $outdir"."all_output_tree.svg");
 		
 
 	

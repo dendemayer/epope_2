@@ -100,7 +100,16 @@ struct gl_arguments gl_readArguments(int argc, char *argv[]) {
 			case 'T':				
 			if(argc < i + 2) usage();
 			//printf("i:%d  argc:%d\n",i, argc);
-			args.T = atof(argv[i+1]);
+			
+			if(atof(argv[i+1]) < 1)
+			{
+				printf("\n\nplease choose a Temperature >=1, otherwise underflow problems are likely to happen, T is now set to 1 \n\n");
+				args.T = 1;
+			}
+			else
+			{
+				args.T = atof(argv[i+1]);
+			}
 			break;
 			
 			
@@ -217,7 +226,7 @@ struct gl_arguments gl_printArguments(gl_arguments ga) {
 	
 	if( ga.z == 1 && ga.b==1)
 	{
-		printf("please choose o ne of the options -b OR -z\nexiting programm\n");
+		printf("please choose one of the options -b OR -z\nexiting programm\n");
 		exit(0);
 	}
 	
@@ -268,17 +277,18 @@ struct gl_arguments gl_printArguments(gl_arguments ga) {
   if(ga.psfile != NULL) fprintf(stdout, "%-35s %s\n","PS-output file:", ga.psfileFlag);           //example.ePoPE.out.ps
   else fprintf(stdout, "%-35s %s\n","PS-output file:", ga.psfileFlag);
   
-  fprintf(stdout, "%-35s %s\n","Score array file:", ga.scores);     //(null)
+ // fprintf(stdout, "%-35s %s\n","Score array file:", ga.scores);     //(null)
   
-  if(ga.type != NULL) fprintf(stdout, "%-35s %s\n","Type:", ga.type); //all
-  else fprintf(stdout, "%-35s all\n", "Type:");
+  //~ if(ga.type != NULL) fprintf(stdout, "%-35s %s\n","Type:", ga.type); //all
+  //~ else fprintf(stdout, "%-35s all\n", "Type:");
+  
   
   fprintf(stdout, "%-35s %d\n","-P is set to:", ga.P);
   fprintf(stdout, "%-35s %d\n","-C is set to:", ga.C);
   fprintf(stdout, "%-35s %d\n","-z is set to:", ga.z);
   fprintf(stdout, "%-35s %d\n","-b is set to:", ga.b);
   fprintf(stdout, "%-35s %f\n","-T is set to:", ga.T);
-  fprintf(stdout, "%-35s %s\n","-c is set to:", ga.collectfile);
+  //fprintf(stdout, "%-35s %s\n","-c is set to:", ga.collectfile);
  // fprintf(stdout, "%-35s %s\n","-d is set to:", ga.directory);
   
     
@@ -304,29 +314,37 @@ struct gl_arguments gl_printArguments(gl_arguments ga) {
 void usage() {
 
   fprintf(stdout, "\n+--------------------------------------------------+");
-  fprintf(stdout, "\n| ePoPE 2.0                                        |");
+  fprintf(stdout, "\n| ePoPE 2.1                                        |");
   fprintf(stdout, "\n|                                                  |");
   fprintf(stdout, "\n| ePoPE - efficent Prediction of Paralog Evolution |");
   fprintf(stdout, "\n+==================================================+\n");
   fprintf(stdout, "\nePoPE predicts a maximal parsimony solution of gain and loss events of a gene family with paralogs.\n");
-
+  fprintf(stdout, "\nThe partition function variant only can be applied with the -z option or together with the Sankoff version with the -b option.\n");
+  
+  fprintf(stdout, "\nA new summary tool called ePoPE_run.sh calls multiple alignments over one tree, then summarizes all outputfiles, creates an annotated svg tree(\"all_output_tree.svg\")\n");   
+  
+  fprintf(stdout, "with gain and losses for all 3 options (Sankoff, Partition Function, Partition Function -P) and gives 3 plots.\n"); 
+  fprintf(stdout, "First plot is called \"gain_loss_whole_tree\" and gives the relative gain and loss from every node in the tree, sorted from top to bottom corresponding to the svg tree.\n"); 
+  fprintf(stdout, "The other two plots gives the sums of the total gain and loss events for all 3 options respectively the sums of the relative gain and loss events for all 3 options. \n");
+    
   fprintf(stdout,"\nUsage: ePoPE [ arguments ] -i ALNFILE -t TREEFILE (or -n NEWICK-TREEFILE)\n\n");
   fprintf(stdout, "arguments: [-o OUTFILE] [-p PS-OUTFILE]\n");
-  fprintf(stdout, "           [-c COLLECTFILE]\n");
+  //fprintf(stdout, "           [-c COLLECTFILE]\n");
   fprintf(stdout, "           [-h,--help] [-v,--version]\n");
-  fprintf(stdout, "           [--type TYPE]\n");
+  fprintf(stdout, "           [-T NUMBER]\n");
   fprintf(stdout, "           [-z] [-b] [-C] [-P]\n\n");
   
   
 
   fprintf(stdout, "%-20s Input alignment FILE in CLUSTALW/STOCKHOLM format. [REQUIRED]\n", "-i FILE");
-  fprintf(stdout, "%-20s Input tree FILE see example.tree.dat format. [REQUIRED]\n", "-t FILE");
-  fprintf(stdout, "%-20s Input tree FILE in newick format see example.newick.tree.dat format. [REQUIRED]\n", "-n FILE");
+  fprintf(stdout, "%-20s Input tree FILE see collapsed_tree.dat format. [REQUIRED]\n", "-t FILE");
+  fprintf(stdout, "%-20s Input tree FILE in newick format . [REQUIRED]\n", "-n FILE");
   fprintf(stdout, "%-20s Input weight array FILE. [OPTIONAL]\n", "-w FILE");
   fprintf(stdout, "%-20s Output FILE for tree data. Default is writing to stdout.[OPTIONAL]\n", "-o FILE");
   fprintf(stdout, "%-20s Output FILE for PS-tree data. Default is 'INFILE.ps'. [OPTIONAL]\n", "-p FILE");
-  fprintf(stdout, "%-20s FILE is a collection of calls to ePoPE with the same tree on a set of gene families created via 'ePoPE.summarize.pl'. This option forces ePoPE to draw this summarized tree. You must provide the tree file you used for the single ePoPE calls with -t option. Example call: ePoPE -c COLLECTFILE -t TREEFILE -p PS-OUTFILE [OPTIONAL]\n", "-c FILE");
-  fprintf(stdout, "%-20s TYPE is one of {genes, gainFam, lossFam, gain, loss, all}. Is the type of values that are plotted in the tree. Default: 'all'. [OPTIONAL]\n", "--type TYPE");
+  //fprintf(stdout, "%-20s FILE is a collection of calls to ePoPE with the same tree on a set of gene families created via 'ePoPE.summarize.pl'. This option forces ePoPE to draw this summarized tree. You must provide the tree file you used for the single ePoPE calls with -t option. Example call: ePoPE -c COLLECTFILE -t TREEFILE -p PS-OUTFILE [OPTIONAL]\n", "-c FILE");
+  //fprintf(stdout, "%-20s TYPE is one of {genes, gainFam, lossFam, gain, loss, all}. Is the type of values that are plotted in the tree. Default: 'all'. [OPTIONAL]\n", "--type TYPE");
+  fprintf(stdout, "%-20s setting the temperature T in the Boltzmann distribution of the partition function variant\n", "-T NUMBER");
   fprintf(stdout, "%-20s Calculating partition function.\n", "-z");
   fprintf(stdout, "%-20s Calculating both, partition function and parsimony scores.\n", "-b");
   fprintf(stdout, "%-20s suppress the collapse of inner nodes with a degree of two.\n", "-C");
@@ -334,7 +352,16 @@ void usage() {
   fprintf(stdout, "%-20s Show this help message.\n", "-h,--help");
   fprintf(stdout, "%-20s Show version information.\n", "-v,--version");
   fprintf(stdout, "\nExample call:\n\n");
-  fprintf(stdout, "\t./ePoPE -n example_newick -i example_ali1 -o example_ali1 -p example_ali1 -b\n\n");
+  fprintf(stdout, "\t./ePoPE -i example/alignments/MIPF0000005_mir-30.stk -t example/collapsed_tree.dat -o example/out.dat -p example/out.ps -b\n\n");
+  
+  fprintf(stdout, "Usage ePoPE_run.sh\n\n");
+  fprintf(stdout,"If you like to run multiple alignments over one tree, you can use the ePoPE_run.sh tool.\n");
+  fprintf(stdout,"Just edit the script and provide the absolute paths of your data.\n\n");
+  fprintf(stdout,"PATHEPOPE=\"/ABSOLUTE_PATH_TO_ePoPE_BINARY/\"\n");
+  fprintf(stdout,"ALIGN=\"/ABSOLUTE_PATH_TO_ALIGNMENT_FILES/\"\n");
+  fprintf(stdout,"RESULTS=\"/ABSOLUTE_PATH_TO_RESULTS_DIRECTORY/\"\n");
+  fprintf(stdout,"TREE=\"/ABSOLUTE_PATH_TO_TREE_FILE/\" \n\n");
+  fprintf(stdout,"All results are saved to the provided RESULTS directory\n");
   fprintf(stdout, "\nPlease feel free to contact me for comments, bug-reports, etc.\n\n");
 
   fprintf(stdout, "--\n");
@@ -346,11 +373,11 @@ void usage() {
 
 void version() {
 
-  fprintf(stdout, "ePoPE 2.0\n\n");
+  fprintf(stdout, "ePoPE 2.1\n\n");
   fprintf(stdout, "Author:		Gabor Balogh and Jana Hertel:\n\n");
   fprintf(stdout, "		gabor@bioinf.uni-leipzig.de\n");
   fprintf(stdout, "		jana@bioinf.uni-leipzig.de\n\n");
-  fprintf(stdout, "Date:		December, 2016\n\n");
+  fprintf(stdout, "Date:		April, 2019\n\n");
 
   exit(EXIT_SUCCESS);
 
@@ -707,7 +734,7 @@ void gl_readDATA(struct gl_arguments ga)
 		collapstest(ga.treefile, &ga);
 		
 	}
-		printf("\nThe nodelist tree used is '%s', please use this file, if you want to print a summarized tree with the ePoPE collect option '-c'\n\n",ga.treefile);
+		//printf("\nThe nodelist tree used is '%s', please use this file, if you want to print a summarized tree with the ePoPE collect option '-c'\n\n",ga.treefile);
 		if (ga.z==0 && ga.b==0 && ga.P==1)
 	{
 		printf("Please be aware, that using the '-P' option in default parsimony mode does not have any effect. The calculation will start nevertheless.\n\n");
@@ -1303,7 +1330,7 @@ void gl_readSummaryTreeN(char * file) {
 
 struct gl_arguments getFilenameExtension(gl_arguments ga)
  {
-	printf("z: %d\t b: %d\t filename: %s\n",ga.z, ga.b, ga.outfile);
+	//printf("z: %d\t b: %d\t filename: %s\n",ga.z, ga.b, ga.outfile);
 	
 	if(ga.z==1)   //
 	{

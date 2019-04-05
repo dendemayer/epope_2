@@ -66,9 +66,6 @@ path=paste(dirname(args[1]),"/totals_whole_tree.svg")
 
 path2=gsub("[[:blank:]]", "", path)
 
-
-#cat("path2",path2, "\n")
-
 #pdf("~/epope_2_paper/epope_bash_run/results_for_bash_test/totals_whole_tree.pdf")
 svg(path2)
 mainhead="summation of total events\n-whole tree-\n"
@@ -83,19 +80,6 @@ abline(h=0)
 
 dev.off()
 
-
-#sum(lst4R.PS$Nr_Fams)
-
-#sum(lst4R.PF$Nr_Fams)
-#sum(lst4R.PF_P$Nr_Fams)
-
-#sum(lst4R.PS$gainFam)
-#sum(lst4R.PF$gainFam)
-#sum(lst4R.PF_P$gainFam)
-
-#sum(lst4R.PS$lossFam)
-#sum(lst4R.PF$lossFam)
-#sum(lst4R.PF_P$lossFam)
 
 calculate = function(x)
 { if (class(x) != "data.frame")
@@ -254,10 +238,6 @@ grafik_loss_3
 class(grafik_gain_3)
 grafik_gain_3
 
-#install.packages("extrafont")
-
-#library(extrafont)
-#font_import()
 
 path=paste(dirname(args[1]),"/gain_loss_whole_tree.svg")
 
@@ -301,50 +281,5 @@ dev.off()
 
 
 
-
- #~ ############################plot loss and gain FAM
-
-#~ # 
-#~ # plot_gainFam_PS=PS_PF_gainFam$gainFam_PS    #herausziehen der spalte gain von PS
-#~ # plot_gainFam_PF=PS_PF_gainFam$gainFam_PF #herausziehen der spalte gain von PF
-#~ # names(plot_gainFam_PF)=PS_PF_gainFam$species #werte mit speziesnamen benennen
-#~ # names(plot_gainFam_PS)=PS_PF_gainFam$species #werte mit speziesnamen benennen
-#~ # grafik_gainFam_both=rbind(plot_gainFam_PS, plot_gainFam_PF) #beide werte unter einem species namen jeweils zusammenführen
-#~ # grafik_gainFam_both
-#~ # 
-#~ # plot_lossFam_PS=PS_PF_lossFam$lossFam_PS
-#~ # plot_lossFam_PF=PS_PF_lossFam$lossFam_PF
-#~ # names(plot_lossFam_PS)=PS_PF_lossFam$species 
-#~ # names(plot_lossFam_PF)=PS_PF_lossFam$species  
-#~ # grafik_lossFam_both=rbind(plot_lossFam_PS, plot_lossFam_PF)
-#~ # grafik_lossFam_both
-#~ # 
-#~ # if(wholetree){pdf("~/Dropbox/Masterarbeit/daten/NEUNEUNEU/both/gain_lossFam.printorder.pdf", height = 7, width = 31)}
-#~ # if(tun){pdf("~/Dropbox/Masterarbeit/daten/NEUNEUNEU/both/gain_lossFam.tun.pdf",height=7,width=15 )}
-#~ # if(gnat){pdf("~/Dropbox/Masterarbeit/daten/NEUNEUNEU/both/gain_lossFam.gnath.pdf", height=7, width=15)}
-#~ # if(nem){pdf("~/Dropbox/Masterarbeit/daten/NEUNEUNEU/both/gain_lossFam.nem.pdf")}
-#~ # 
-#~ # par(mar=c(5,4,4,2), oma=c(6,0,0,0))
-#~ # 
-#~ # barplot(grafik_gainFam_both, beside=T, ylim=c(-100,100),border=F,
-#~ #         las=3, 
-#~ #         col = c("red","blue"))
-#~ # 
-#~ # if(wholetree)
-#~ # {mainhead="gainFam and lossFam for parsimony score \n and partition function - whole tree "}
-#~ # if(tun)
-#~ # {mainhead="gainFam and lossFam for parsimony score \n and partition function - tunicata subtree "}
-#~ # if(nem)
-#~ # {mainhead="gainFam and lossFam for parsimony score \n and partition function - nematoda subtree "}
-#~ # if(gnat)
-#~ # {mainhead="gainFam and lossFam for parsimony score \n and partition function - gnathostomata subtree"}
-#~ # 
-#~ # barplot(grafik_lossFam_both, beside=T, las=3,add=T,border=F,legend= c("parsimony score", "partition function"),
-#~ #         col = c("red","blue"),ylab = "gain and loss in %",main=mainhead)
-#~ # 
-#~ # abline(h=0)
-#~ # dev.off()
-#~ # 
-#~ # 
 
 

@@ -33,29 +33,35 @@ Usage:
 $ ./ePoPE
 
 +--------------------------------------------------+
-| ePoPE 2.0                                        |
+| ePoPE 2.1                                        |
 |                                                  |
 | ePoPE - efficent Prediction of Paralog Evolution |
 +==================================================+
 
-ePoPE predicts a maximal parsimony solution of gain and loss events of a gene family with paralogs.
+ePoPE predicts a maximal parsimony solution of gain and loss events of a gene family with paralogs. 
+The partition function variant only can be applied with the -z option or together with the Sankoff version 
+with the -b option.
+
+A new summary tool called ePoPE_run.sh calls multiple alignments over one tree, then summarizes all outputfiles, creates an 
+annotated svg tree("all_output_tree.svg") with gain and losses for all 3 options (Sankoff, Partition Function, Partition Function -P) and gives
+3 plots. First plot is called "gain_loss_whole_tree" and gives the relative gain and loss from every node in the tree, sorted
+from top to bottom corresponding to the svg tree. The other two plots gives the sums of the total gain and loss events for all 3 options 
+respectively the sums of the relative gain and loss events for all 3 options.
 
 Usage: ePoPE [ arguments ] -i ALNFILE -t TREEFILE (or -n NEWICK-TREEFILE)
 
 arguments: [-o OUTFILE] [-p PS-OUTFILE]
-           [-c COLLECTFILE]
            [-h,--help] [-v,--version]
-           [--type TYPE]
+           [-T NUMBER]
            [-z] [-b] [-C] [-P]
 
 -i FILE              Input alignment FILE in CLUSTALW/STOCKHOLM format. [REQUIRED]
--t FILE              Input tree FILE see example.tree.dat format. [REQUIRED]
--n FILE              Input tree FILE in newick format see example.newick.tree.dat format. [REQUIRED]
+-t FILE              Input tree FILE see collapsed_tree.dat format. [REQUIRED]
+-n FILE              Input tree FILE in newick format. [REQUIRED]
 -w FILE              Input weight array FILE. [OPTIONAL]
 -o FILE              Output FILE for tree data. Default is writing to stdout.[OPTIONAL]
 -p FILE              Output FILE for PS-tree data. Default is 'INFILE.ps'. [OPTIONAL]
--c FILE              FILE is a collection of calls to ePoPE with the same tree on a set of gene families created via 'ePoPE.summarize.pl'. This option forces ePoPE to draw this summarized tree. You must provide the tree file you used for the single ePoPE calls with -t option. Example call: ePoPE -c COLLECTFILE -t TREEFILE -p PS-OUTFILE [OPTIONAL]
---type TYPE          TYPE is one of {genes, gainFam, lossFam, gain, loss, all}. Is the type of values that are plotted in the tree. Default: 'all'. [OPTIONAL]
+-T NUMBER			 setting the temperature T in the Boltzmann distribution of the partition function variant	
 -z                   Calculating partition function.
 -b                   Calculating both, partition function and parsimony scores.
 -C                   suppress the collapse of inner nodes with a degree of two.
@@ -65,46 +71,53 @@ arguments: [-o OUTFILE] [-p PS-OUTFILE]
 
 Example call:
 
-        ./ePoPE -n example.newick -i example.ali_1 -o example.ali_1 -p example.ali_1 -b
+        ./ePoPE -i example/alignments/MIPF0000005_mir-30.stk -t example/collapsed_tree.dat -o example/out.dat -p example/out.ps -b
 
 
-Please feel free to contact me for comments, bug-reports, etc.                      
+
+Example prompt:
+
+		Arguments:
+		-----------
+		Input aln file:                     example/alignments/MIPF0000005_mir-30.stk
+		Input tree file:                    example/collapsed_tree.dat
+		Output file:                        example/out_PSb.out
+		2. Output file:                     example/out_PFb.out
+		PS-output file:                     example/out_PS_PF.ps
+		-P is set to:                       0
+		-C is set to:                       0
+		-z is set to:                       0
+		-b is set to:                       1
+		-T is set to:                       1.000000
+		
+		Calculating Partition Funktion and Parsimony Scores
+		
+		FIRST: preorder: 142 pInT: 142 label: 156 (cmi)
+		LAST:  preorder: 224 pInT: 224 label: 272 (str)
+		kMax: 13 kMin: 0
+		anzahl knoten: 235
+		A comparison of Parsimony Scores and Partition function is visualized in the Tree: example/out_PS_PF.ps
+		Parsimony Score is stored in example/out_PSb.out
+		Partition function score is stored in example/out_PFb.out
+		
+Usage ePoPE_run.sh
+
+
+If you like to run multiple alignments over one tree, you can use the ePoPE_run.sh tool. Just edit the script and provide the absolute paths of your data.
+
+PATHEPOPE="/ABSOLUTE_PATH_TO_ePoPE_BINARY/"
+ALIGN="/ABSOLUTE_PATH_TO_ALIGNMENT_FILES/"
+RESULTS="/ABSOLUTE_PATH_TO_RESULTS_DIRECTORY/"
+TREE="/ABSOLUTE_PATH_TO_TREE_FILE/"           
+                                          
+All results are saved to the provided RESULTS directory
                                                                                     
 --                                                                                  
-ePoPE 2.0                                                                           
+ePoPE 2.1                                                                           
                                                                                     
-Auhthor: Jana Hertel and Gabor Balogh:                                              
+Auhthor: Gabor Balogh and Jana Hertel:                                              
                                                                                     
-         jana@bioinf.uni-leipzig.de                                                 
          gabor@bioinf.uni-leipzig.de                                                
+         jana@bioinf.uni-leipzig.de                                                 
                                                                                     
-Date:    December, 2016                                                             
-                         
-Example:
---------
-
-$ make
-
-$ cd /example
-../ePoPE -n example_newick -i example_ali1 -o example_ali1 -p example_ali1 -b
-#writing example_ali1_PSb.out, example_ali1_PFb.out,  example_ali1_PS_PF.ps and the tree in nodelistform: collapsed_tree.dat
-
-$ ../ePoPE -n example_newick -i example_ali2 -o example_ali2 -p example_ali2 -b
-#writing example_ali2_PSb.out, example_ali2_PFb.out,  example_ali2_PS_PF.ps and the tree in nodelistform: collapsed_tree.dat
-
-$ ../ePoPE.summarize.pl -d ./ -o sum
-#writing sum_PSb.sum, sum_PFb.sum
-
-$ ../ePoPE -c sum_PSb.sum -t collapsed_tree.dat -p PSb
-#writing PSb_collect.ps
-
-$ ../ePoPE -c sum_PFb.sum -t collapsed_tree.dat -p PFb
-#writing PFb_collect.ps
-
-You can run the program over more than one alignment using a simple 'FOR'
-loop on the command line.
-
-The tool 'ePoPE.summarize.pl' summarizes the tree files for all your
-alignment, given that they are stored in an extra directory.
-
-The file ePoPE.1.gz holds the manpage.
+Date:    April, 2019                                                             

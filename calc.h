@@ -10,6 +10,7 @@
 
 
 
+
 /* do forward and backward recursion */
 void gl_calc(struct gl_arguments ga);
 
