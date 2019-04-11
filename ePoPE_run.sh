@@ -1,11 +1,18 @@
 #!/bin/bash
 
+##########################
+#to properly run this script, you need perl, R, and the graphviz dot
+#renderer installed at your system
+
+###########################
 clear;
 
-PATHEPOPE="/homes/biertruck/gabor/epope_2_paper/epope_2/"		#DIR
-ALIGN="/homes/biertruck/gabor/epope_2_paper/epope_2/example/alignments/"		#DIR
-RESULTS="/homes/biertruck/gabor/epope_2_paper/epope_2/example/results/"		#DIR
-TREE="/homes/biertruck/gabor/epope_2_paper/epope_2/example/collapsed_tree.dat"	#FILE
+
+
+PATHEPOPE="$HOME/epope_2_paper/epope_2/"						#DIR
+ALIGN="$HOME/epope_2_paper/epope_2/example/alignments/"			#DIR
+RESULTS="$HOME/epope_2_paper/epope_2/example/results/"			#DIR
+TREE="$HOME/epope_2_paper/epope_2/example/collapsed_tree.dat"	#FILE
 
 echo -e "path for epope binary is:\t $PATHEPOPE "
 echo -e "path for alignments is:\t\t $ALIGN "

@@ -105,13 +105,17 @@ Usage ePoPE_run.sh
 
 If you like to run multiple alignments over one tree, you can use the ePoPE_run.sh tool. Just edit the script and provide the absolute paths of your data.
 
-PATHEPOPE="/ABSOLUTE_PATH_TO_ePoPE_BINARY/"
-ALIGN="/ABSOLUTE_PATH_TO_ALIGNMENT_FILES/"
-RESULTS="/ABSOLUTE_PATH_TO_RESULTS_DIRECTORY/"
-TREE="/ABSOLUTE_PATH_TO_TREE_FILE/"           
+PATHEPOPE="/ABSOLUTE_PATH_TO_ePoPE_BINARY/"			#DIR
+ALIGN="/ABSOLUTE_PATH_TO_ALIGNMENT_FILES/"			#DIR
+RESULTS="/ABSOLUTE_PATH_TO_RESULTS_DIRECTORY/"		#DIR
+TREE="/ABSOLUTE_PATH_TO_TREE_FILE/"           		#FILE
                                           
-All results are saved to the provided RESULTS directory
-                                                                                    
+After running the script, all results are saved to the provided RESULTS directory.
+The script invokes R code, perl code and renders a generated "all_dot_tree.dot"
+file with help of the graphviz dot renderer, so please make sure that those 
+programs are installed at your system.
+        
+Please feel free to contact me for comments, bug-reports, etc.                                                                     
 --                                                                                  
 ePoPE 2.1                                                                           
                                                                                     

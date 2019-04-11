@@ -357,11 +357,14 @@ void usage() {
   fprintf(stdout, "Usage ePoPE_run.sh\n\n");
   fprintf(stdout,"If you like to run multiple alignments over one tree, you can use the ePoPE_run.sh tool.\n");
   fprintf(stdout,"Just edit the script and provide the absolute paths of your data.\n\n");
-  fprintf(stdout,"PATHEPOPE=\"/ABSOLUTE_PATH_TO_ePoPE_BINARY/\"\n");
-  fprintf(stdout,"ALIGN=\"/ABSOLUTE_PATH_TO_ALIGNMENT_FILES/\"\n");
-  fprintf(stdout,"RESULTS=\"/ABSOLUTE_PATH_TO_RESULTS_DIRECTORY/\"\n");
-  fprintf(stdout,"TREE=\"/ABSOLUTE_PATH_TO_TREE_FILE/\" \n\n");
-  fprintf(stdout,"All results are saved to the provided RESULTS directory\n");
+  fprintf(stdout,"PATHEPOPE=\"/ABSOLUTE_PATH_TO_ePoPE_BINARY/\"\t#DIR\n");
+  fprintf(stdout,"ALIGN=\"/ABSOLUTE_PATH_TO_ALIGNMENT_FILES/\"\t#DIR\n");
+  fprintf(stdout,"RESULTS=\"/ABSOLUTE_PATH_TO_RESULTS_DIRECTORY/\"\t#DIR\n");
+  fprintf(stdout,"TREE=\"/ABSOLUTE_PATH_TO_TREE_FILE/\"\t\t#FILE \n\n");
+  fprintf(stdout,"After running the script, all results are saved to the provided RESULTS directory.\n");
+  fprintf(stdout,"The script invokes R code, perl code and renders a generated \"all_dot_tree.dot\"\n");
+  fprintf(stdout,"file with help of the graphviz dot renderer, so please make sure that those\n");
+  fprintf(stdout,"programs are installed at your system.\n");
   fprintf(stdout, "\nPlease feel free to contact me for comments, bug-reports, etc.\n\n");
 
   fprintf(stdout, "--\n");
